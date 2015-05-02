@@ -9,7 +9,7 @@
  *
  */
 
-package cs5625.pa4;
+package cs5625.fancyplane;
 
 import cs5625.gfx.camera.Camera;
 import cs5625.gfx.camera.PerspectiveCamera;

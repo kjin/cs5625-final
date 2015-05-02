@@ -9,14 +9,17 @@
  *
  */
 
-package cs5625.pa4;
+package cs5625.fancyplane;
 
 import cs5625.gfx.camera.PerspectiveCamera;
 import cs5625.gfx.glcache.GLResourceCache;
 import cs5625.gfx.json.NamedObject;
 import cs5625.gfx.light.ShadowingSpotLight;
+import cs5625.gfx.mesh.TriMesh;
+import cs5625.gfx.mesh.converter.WavefrontObjToTriMeshConverter;
 import cs5625.gfx.objcache.Holder;
 import cs5625.gfx.objcache.Reference;
+import cs5625.gfx.objcache.Value;
 import cs5625.gfx.scenetree.SceneTreeNode;
 import cs5625.gfx.scenetree.SceneTreeTraverser;
 import cs5625.ui.*;
@@ -28,11 +31,13 @@ import javax.swing.*;
 import javax.vecmath.Color3f;
 import javax.vecmath.Point3f;
 import javax.vecmath.Vector3f;
+
 import java.awt.*;
 import java.awt.event.*;
+import java.io.IOException;
 import java.util.ArrayList;
 
-public class PA4_Shadows extends JFrame implements GLController, ActionListener {
+public class FancyPlaneGame extends JFrame implements GLController, ActionListener {
     GLView glView;
     private int canvasWidth = 1024;
     private int canvasHeight = 768;
@@ -75,20 +80,20 @@ public class PA4_Shadows extends JFrame implements GLController, ActionListener 
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
-                new PA4_Shadows().run();
+                new FancyPlaneGame().run();
             }
         });
     }
 
-    public PA4_Shadows() {
-        super("CS 5625 Programming Assignment 4: Shadows");
+    public FancyPlaneGame() {
+        super("CS 5625 Fancy Plane: Final Project");
     }
 
     private void run() {
-        scenes.add(new Reference<SceneTreeNode>("jsonfile", "data/scenes/spot-light.json"));
-        scenes.add(new Reference<SceneTreeNode>("jsonfile", "data/scenes/outdoor.json"));
-        sceneBackgroundColors.add(new Color3f(0,0,0));
-        sceneBackgroundColors.add(new Color3f(0.06f, 0.3f, 1.0f));
+    	SceneTreeNode fancyScene = new SceneTreeNode();
+    	GameController fancyGameController = new GameController(fancyScene);
+        scenes.add(new Value<SceneTreeNode>(fancyScene));
+        sceneBackgroundColors.add(new Color3f(0.6f,0.8f,1.0f));
 
         setPreferredSize(new Dimension(canvasWidth, canvasHeight));
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -149,8 +154,7 @@ public class PA4_Shadows extends JFrame implements GLController, ActionListener 
 
         controlPanel.add(new Label("Scene:"), "1,1,1,1");
         sceneComboBox = new JComboBox();
-        sceneComboBox.addItem("1. Spot Light");
-        sceneComboBox.addItem("2. Outdoor");
+        sceneComboBox.addItem("1. Fancy Plane");
         controlPanel.add(sceneComboBox, "3,1,3,1");
         sceneComboBox.addActionListener(this);
 
