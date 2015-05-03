@@ -41,28 +41,54 @@ public class GameController {
 	public void Update()
 	{
 		fancyLandscape.Update();
+		fancyPlayer.update();
 	}
-
+	
 	public void keyPressed(KeyEvent e)
 	{
-		//example:
-		if(e.getKeyCode() == KeyEvent.VK_W)
+		if(e.getKeyCode() == KeyEvent.VK_W || e.getKeyCode() == KeyEvent.VK_UP)
 		{
-			System.out.println("W pressed!");
+			fancyPlayer.upPressed();
 		}
-		
-		//let player know?
-		
+		else if(e.getKeyCode() == KeyEvent.VK_A || e.getKeyCode() == KeyEvent.VK_LEFT)
+		{
+			fancyPlayer.leftPressed();
+		}
+		else if(e.getKeyCode() == KeyEvent.VK_S || e.getKeyCode() == KeyEvent.VK_DOWN)
+		{
+			fancyPlayer.downPressed();
+		}
+		else if(e.getKeyCode() == KeyEvent.VK_D || e.getKeyCode() == KeyEvent.VK_RIGHT)
+		{
+			fancyPlayer.rightPressed();
+		}
+
 	}
 	
 	public void keyReleased(KeyEvent e)
 	{
-		//example:
-		if(e.getKeyCode() == KeyEvent.VK_W)
+		if(e.getKeyCode() == KeyEvent.VK_W || e.getKeyCode() == KeyEvent.VK_UP)
 		{
-			System.out.println("W released!");
+			fancyPlayer.upReleased();
 		}
+		else if(e.getKeyCode() == KeyEvent.VK_A || e.getKeyCode() == KeyEvent.VK_LEFT)
+		{
+			fancyPlayer.leftReleased();
+		}
+		else if(e.getKeyCode() == KeyEvent.VK_S || e.getKeyCode() == KeyEvent.VK_DOWN)
+		{
+			fancyPlayer.downReleased();
+		}
+		else if(e.getKeyCode() == KeyEvent.VK_D || e.getKeyCode() == KeyEvent.VK_RIGHT)
+		{
+			fancyPlayer.rightReleased();
+		}
+<<<<<<< HEAD
 		
 		//let player know?
 	}
+=======
+	}
+	
+>>>>>>> 1c27360a0f5e0453a23f1febccea6f85b264efa0
 }
