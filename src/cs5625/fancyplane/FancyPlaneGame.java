@@ -70,6 +70,9 @@ public class FancyPlaneGame extends JFrame implements GLController, ActionListen
     JSpinnerSlider[] spotLightTargetSpinnerSliders = new JSpinnerSlider[3];
 
     ArrayList<ShadowingSpotLight> spotLights = new ArrayList<ShadowingSpotLight>();
+    
+    // the gameplay contoller!!!!
+    GameController fancyGameController;
 
     public static void main(String[] args) {
         try {
@@ -91,7 +94,7 @@ public class FancyPlaneGame extends JFrame implements GLController, ActionListen
 
     private void run() {
     	SceneTreeNode fancyScene = new SceneTreeNode();
-    	GameController fancyGameController = new GameController(fancyScene);
+    	fancyGameController = new GameController(fancyScene);
         scenes.add(new Value<SceneTreeNode>(fancyScene));
         sceneBackgroundColors.add(new Color3f(0.6f,0.8f,1.0f));
 
@@ -113,6 +116,7 @@ public class FancyPlaneGame extends JFrame implements GLController, ActionListen
             getContentPane().add(BorderLayout.CENTER, glViewWindows);
             glViewWindows.requestFocusInWindow();
             glView = glViewWindows;
+            glViewWindows.addKeyListener(this);
         } else {
             GLViewMac glViewMac = new GLViewMac();
             glViewMac.addGLController(this);
@@ -121,6 +125,7 @@ public class FancyPlaneGame extends JFrame implements GLController, ActionListen
             getContentPane().add(BorderLayout.CENTER, glViewMac);
             glViewMac.requestFocusInWindow();
             glView = glViewMac;
+            glViewMac.addKeyListener(this);
         }
     }
 
@@ -156,7 +161,7 @@ public class FancyPlaneGame extends JFrame implements GLController, ActionListen
         sceneComboBox = new JComboBox();
         sceneComboBox.addItem("1. Fancy Plane");
         controlPanel.add(sceneComboBox, "3,1,3,1");
-        sceneComboBox.addActionListener(this);
+        //sceneComboBox.addActionListener(this);
 
         controlPanel.add(new Label("Display Mode:"), "1,3,1,3");
         displayModeComboBox = new JComboBox();
@@ -167,7 +172,7 @@ public class FancyPlaneGame extends JFrame implements GLController, ActionListen
         displayModeComboBox.addItem("G-Buffer #2");
         displayModeComboBox.addItem("G-Buffer #3");
         displayModeComboBox.addItem("G-Buffer #4");
-        displayModeComboBox.addActionListener(this);
+        //displayModeComboBox.addActionListener(this);
         controlPanel.add(displayModeComboBox, "3,3,3,3");
 
         controlPanel.add(new Label("Shadow Map Min Z (for display only):"), "1,5,1,5");
@@ -183,7 +188,7 @@ public class FancyPlaneGame extends JFrame implements GLController, ActionListen
         controlPanel.add(new JLabel("Spot Light:"), "5,1,5,1");
         shadowMapComboBox = new JComboBox();
         controlPanel.add(shadowMapComboBox, "7,1,7,1");
-        shadowMapComboBox.addActionListener(this);
+        //shadowMapComboBox.addActionListener(this);
 
         controlPanel.add(new Label("Shadow Map Mode:"), "5,3,5,3");
         shadowMapModeComboBox = new JComboBox();
@@ -326,7 +331,7 @@ public class FancyPlaneGame extends JFrame implements GLController, ActionListen
         node.letTraverse(collector);
 
         if (shadowMapComboBox.getItemCount() != spotLights.size()) {
-            shadowMapComboBox.removeActionListener(this);
+            //shadowMapComboBox.removeActionListener(this);
             int currentIndex = shadowMapComboBox.getSelectedIndex();
             shadowMapComboBox.removeAllItems();
             for (int i = 0; i < spotLights.size(); i++) {
@@ -335,7 +340,7 @@ public class FancyPlaneGame extends JFrame implements GLController, ActionListen
             if (currentIndex < 0) currentIndex = 0;
             if (currentIndex >= shadowMapComboBox.getItemCount()) currentIndex = shadowMapComboBox.getItemCount()-1;
             shadowMapComboBox.setSelectedIndex(currentIndex);
-            shadowMapComboBox.addActionListener(this);
+            //shadowMapComboBox.addActionListener(this);
         }
         updateShadowMapControls();
     }
@@ -417,12 +422,12 @@ public class FancyPlaneGame extends JFrame implements GLController, ActionListen
 
     @Override
     public void keyPressed(KeyEvent e) {
-
+    	fancyGameController.keyPressed(e);
     }
 
     @Override
     public void keyReleased(KeyEvent e) {
-
+    	fancyGameController.keyReleased(e);
     }
 
     @Override

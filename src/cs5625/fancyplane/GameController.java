@@ -1,5 +1,6 @@
 package cs5625.fancyplane;
 
+import java.awt.event.KeyEvent;
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -39,4 +40,28 @@ public class GameController {
     	spotLightNode.setData(new Value<NamedObject>(spotLight));
     	fancyScene.addChild(spotLightNode);
 	}
+	
+	public void keyPressed(KeyEvent e)
+	{
+		//example:
+		if(e.getKeyCode() == KeyEvent.VK_W)
+		{
+			System.out.println("W pressed!");
+		}
+		
+		//let player know?
+		
+	}
+	
+	public void keyReleased(KeyEvent e)
+	{
+		//example:
+		if(e.getKeyCode() == KeyEvent.VK_W)
+		{
+			System.out.println("W released!");
+		}
+		
+		//let player know?
+	}
+	
 }
