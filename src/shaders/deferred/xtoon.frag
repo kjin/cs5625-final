@@ -9,7 +9,7 @@
 
 const int XTOON_MATERIAL_ID = 4;
 
-const int zmin = 10;
+const int zmin = 15;
 const int zmax = 400;
 
 varying vec3 geom_position;
