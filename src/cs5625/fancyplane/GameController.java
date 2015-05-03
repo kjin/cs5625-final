@@ -36,4 +36,9 @@ public class GameController {
     	spotLightNode.setData(new Value<NamedObject>(spotLight));
     	fancyScene.addChild(spotLightNode);
 	}
+	
+	public void Update()
+	{
+		fancyLandscape.Update();
+	}
 }
