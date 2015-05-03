@@ -32,6 +32,11 @@ public class FancyPlayer {
 	final float X_SPEED = 0.4f;
 	final float Y_SPEED = 0.4f;
 	
+	final float UP_BOUND = 10;
+	final float DOWN_BOUND = -10;
+	final float RIGHT_BOUND = 10;
+	final float LEFT_BOUND = -10;
+	
 	public FancyPlayer(SceneTreeNode rootNode)
 	{
     	ArrayList<TriMesh> meshes = new ArrayList<TriMesh>();
@@ -60,6 +65,9 @@ public class FancyPlayer {
 		
 		position.x += velocity.x;
 		position.y += velocity.y;
+		
+		position.x = Math.min(Math.max(position.x, LEFT_BOUND), RIGHT_BOUND);
+		position.y = Math.min(Math.max(position.y, DOWN_BOUND), UP_BOUND);
 		
 		node.setPosition(position);
 	}
