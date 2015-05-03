@@ -38,27 +38,50 @@ public class GameController {
     	fancyScene.addChild(spotLightNode);
 	}
 	
+	public void update()
+	{
+		fancyPlayer.update();
+	}
+	
 	public void keyPressed(KeyEvent e)
 	{
-		//example:
-		if(e.getKeyCode() == KeyEvent.VK_W)
+		if(e.getKeyCode() == KeyEvent.VK_W || e.getKeyCode() == KeyEvent.VK_UP)
 		{
-			System.out.println("W pressed!");
+			fancyPlayer.upPressed();
 		}
-		
-		//let player know?
-		
+		else if(e.getKeyCode() == KeyEvent.VK_A || e.getKeyCode() == KeyEvent.VK_LEFT)
+		{
+			fancyPlayer.leftPressed();
+		}
+		else if(e.getKeyCode() == KeyEvent.VK_S || e.getKeyCode() == KeyEvent.VK_DOWN)
+		{
+			fancyPlayer.downPressed();
+		}
+		else if(e.getKeyCode() == KeyEvent.VK_D || e.getKeyCode() == KeyEvent.VK_RIGHT)
+		{
+			fancyPlayer.rightPressed();
+		}
+
 	}
 	
 	public void keyReleased(KeyEvent e)
 	{
-		//example:
-		if(e.getKeyCode() == KeyEvent.VK_W)
+		if(e.getKeyCode() == KeyEvent.VK_W || e.getKeyCode() == KeyEvent.VK_UP)
 		{
-			System.out.println("W released!");
+			fancyPlayer.upReleased();
 		}
-		
-		//let player know?
+		else if(e.getKeyCode() == KeyEvent.VK_A || e.getKeyCode() == KeyEvent.VK_LEFT)
+		{
+			fancyPlayer.leftReleased();
+		}
+		else if(e.getKeyCode() == KeyEvent.VK_S || e.getKeyCode() == KeyEvent.VK_DOWN)
+		{
+			fancyPlayer.downReleased();
+		}
+		else if(e.getKeyCode() == KeyEvent.VK_D || e.getKeyCode() == KeyEvent.VK_RIGHT)
+		{
+			fancyPlayer.rightReleased();
+		}
 	}
 	
 }
