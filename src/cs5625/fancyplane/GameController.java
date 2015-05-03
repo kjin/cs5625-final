@@ -83,12 +83,7 @@ public class GameController {
 		{
 			fancyPlayer.rightReleased();
 		}
-<<<<<<< HEAD
 		
 		//let player know?
 	}
-=======
-	}
-	
->>>>>>> 1c27360a0f5e0453a23f1febccea6f85b264efa0
 }
