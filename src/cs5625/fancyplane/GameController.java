@@ -20,8 +20,8 @@ public class GameController {
 	public GameController(SceneTreeNode rootNode)
 	{
 		fancyScene = rootNode;
-		fancyPlayer = new FancyPlayer(fancyScene);
 		fancyBulletManager = new FancyBulletManager(fancyScene);
+		fancyPlayer = new FancyPlayer(fancyScene, fancyBulletManager);
 		fancyLandscape = new FancyLandscape(fancyScene);
     	
     	ShadowingSpotLight spotLight = new ShadowingSpotLight();
@@ -58,6 +58,10 @@ public class GameController {
 		{
 			fancyPlayer.rightPressed();
 		}
+		else if(e.getKeyCode() == KeyEvent.VK_SPACE)
+		{
+			fancyPlayer.spacePressed();
+		}
 
 	}
 	
@@ -78,6 +82,10 @@ public class GameController {
 		else if(e.getKeyCode() == KeyEvent.VK_D || e.getKeyCode() == KeyEvent.VK_RIGHT)
 		{
 			fancyPlayer.rightReleased();
+		}
+		else if(e.getKeyCode() == KeyEvent.VK_SPACE)
+		{
+			fancyPlayer.spaceReleased();
 		}
 		
 		//let player know?

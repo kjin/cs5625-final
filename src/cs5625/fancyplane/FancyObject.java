@@ -17,7 +17,7 @@ import cs5625.gfx.scenetree.SceneTreeNode;
 public class FancyObject {
 	protected Vector3f velocity;
 	public Vector3f getVelocity() { return velocity; }
-	public void setVelocity(Vector3f value) { velocity = value; }
+	public void setVelocity(Vector3f value) { velocity.set(value); }
 	
 	protected float velocityDampeningFactor;
 	public float getVelocityDampeningFactor() { return velocityDampeningFactor; }
@@ -25,15 +25,19 @@ public class FancyObject {
 	
 	protected Point3f position;
 	public Point3f getPosition() { return position; }
-	public void setPosition(Point3f value) { position = value; }
+	public void setPosition(Point3f value) { position.set(value); }
 	
 	protected boolean visible;
 	public boolean getVisibility() { return visible; }
-	public void setVisibility(boolean value) { visible = value; }
+	public void setVisibility(boolean value) { visible = value; node.setScale(visible ? 1.0f : 0.001f); }
+	
+	protected FancyTeam team;
+	public FancyTeam getTeam() { return team; }
+	public void setTeam(FancyTeam value) { team = value; }
 	
 	protected SceneTreeNode node;
 	
-	public FancyObject(SceneTreeNode parentNode, String modelName)
+	public FancyObject(SceneTreeNode parentNode, String modelName, FancyTeam team)
 	{
 		ArrayList<TriMesh> meshes = new ArrayList<TriMesh>();
 		try {
@@ -50,6 +54,8 @@ public class FancyObject {
 		node.setOrientation(rotation);
 		parentNode.addChild(node);
 		
+		this.team = team;
+		
 		velocityDampeningFactor = 1.0f;
 		velocity = new Vector3f(0,0,0);
 		position = node.getPosition();
@@ -58,17 +64,13 @@ public class FancyObject {
 	
 	public void update()
 	{
-		velocity.scale(velocityDampeningFactor);
-		position.x += velocity.x;
-		position.y += velocity.y;
-		node.setPosition(position);
 		if (visible)
 		{
-			node.setScale(1);
+			velocity.scale(velocityDampeningFactor);
+			position.x += velocity.x;
+			position.y += velocity.y;
+			node.setPosition(position);
 		}
-		else
-		{
-			node.setScale(0.001f);
-		}
+		node.setScale(visible ? 1.0f : 0.001f);
 	}
 }

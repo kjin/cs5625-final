@@ -38,7 +38,7 @@ public class FancyLandscape {
 			nodes[i] = new SceneTreeNode();
 			nodes[i].setData(new Value<NamedObject>(fancyMesh));
 			nodes[i].setPosition(WIDTH * (i - nodes.length / 2.0f), -10, 0);
-			parentNode.addChild(nodes[i]);
+			//parentNode.addChild(nodes[i]);
 		}
 		minBound = nodes[0].getPosition().y - 1.5f * WIDTH;
 	}
