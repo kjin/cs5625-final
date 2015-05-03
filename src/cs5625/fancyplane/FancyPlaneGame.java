@@ -310,6 +310,8 @@ public class FancyPlaneGame extends JFrame implements GLController, ActionListen
             light.setNear(Math.min(nearValue, farValue));
             light.setFar(Math.max(nearValue, farValue));
         }
+        
+    	fancyGameController.Update();
 
         deferredRenderer.render(gl, sceneGraph, camera, canvasWidth, canvasHeight);
 
