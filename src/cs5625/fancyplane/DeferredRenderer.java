@@ -877,6 +877,8 @@ public class DeferredRenderer {
             renderMeshPart(mesh, meshPart, (LambertianMaterial) material);
         } else if (material instanceof BlinnPhongMaterial) {
             renderMeshPart(mesh, meshPart, (BlinnPhongMaterial) material);
+        } else if (material instanceof XToonMaterial) {
+        	renderMeshPart(mesh, meshPart, (XToonMaterial) material);
         } else {
             renderMeshPart(mesh, meshPart, whiteMaterial);
         }
@@ -988,6 +990,41 @@ public class DeferredRenderer {
         disableVertexAttributes(program, mesh);
         program.unuse();
     }
+    
+    private void renderMeshPart(Mesh mesh, MeshPart meshPart, XToonMaterial material) {
+        VertexData vertexData = mesh.getVertexData().get();
+        IndexData indexData = mesh.getIndexData().get();
+
+        if (!checkVertexAttribute(vertexData, "vert_position", material)) return;
+        if (!checkVertexAttribute(vertexData, "vert_normal", material)) return;
+        boolean useTexture = material.getXToonTexture() != null;
+        if (useTexture && !checkVertexAttribute(vertexData, "vert_texCoord", material)) return;
+
+        Program program = getProgram(getVertexShaderFileName(vertexData), "src/shaders/deferred/xtoon.frag");
+        program.use();
+        bindVertexAttributes(program, mesh);
+        int texUnitStart = setupVertexShaderUniforms(program, mesh);
+
+        // Set uniforms.   
+        setMatrixUniforms(program);
+        useTexture(program, material.getXToonTexture(), "mat_hasXToonTexture", "mat_xtoonTexture", texUnitStart + 0);
+        
+        // XToon only works with point lights for now
+        setPointLightUniforms(program);
+        program.setUniform("spotLight_enabled", false);
+
+        // Draw the mesh part.
+        drawElement(indexData, meshPart);
+
+        // Tear down the program.
+        unuseTexture(program, material.getXToonTexture());
+
+        tearDownVertexShaderUniforms(program, mesh);
+        disableVertexAttributes(program, mesh);
+        program.unuse();
+    }
+    
+    
 
     class ShadowMapRenderer implements SceneTreeTraverser {
         Matrix4f modelMatrix = new Matrix4f();
