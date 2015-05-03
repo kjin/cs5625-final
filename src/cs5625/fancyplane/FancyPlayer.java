@@ -18,129 +18,89 @@ import cs5625.gfx.mesh.converter.WavefrontObjToTriMeshConverter;
 import cs5625.gfx.objcache.Value;
 import cs5625.gfx.scenetree.SceneTreeNode;
 
-public class FancyPlayer {
-	
-	SceneTreeNode node;
-	
-	Vector2f velocity;
-	
+public class FancyPlayer extends FancyObject
+{	
 	boolean upPressed = false;
 	boolean downPressed = false;
 	boolean rightPressed = false;
 	boolean leftPressed = false;
 	
-	final float X_SPEED = 0.4f;
-	final float Y_SPEED = 0.4f;
+	final float X_SPEED_CAP = 0.4f;
+	final float Y_SPEED_CAP = 0.4f;
+	final float ACCELERATION = 0.1f;
+	final float DAMPENING = 0.8f;
 	
 	final float UP_BOUND = 10;
 	final float DOWN_BOUND = -10;
 	final float RIGHT_BOUND = 10;
 	final float LEFT_BOUND = -10;
 	
-	public FancyPlayer(SceneTreeNode rootNode)
+	public FancyPlayer(SceneTreeNode parentNode)
 	{
-    	ArrayList<TriMesh> meshes = new ArrayList<TriMesh>();
-		try {
-			meshes.addAll(WavefrontObjToTriMeshConverter.load("data/models/fancy-plane.obj", true, true));
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		TriMesh fancyMesh = meshes.get(0);
-		
-		node = new SceneTreeNode();
-		node.setData(new Value<NamedObject>(fancyMesh));
-		Quat4f rotation = new Quat4f();
-		rotation.set(new AxisAngle4f(new Vector3f(0.0f, 1.0f, 0.0f), (float)Math.PI / 2));
-		node.setOrientation(rotation);
-		rootNode.addChild(node);
-		
-		velocity = new Vector2f(0,0);
+		super(parentNode, "fancy-plane");
+		this.velocityDampeningFactor = DAMPENING;
 	}
 	
 	public void update()
 	{
-		Point3f position = node.getPosition();
-		
-		position.x += velocity.x;
-		position.y += velocity.y;
-		
+		if (leftPressed)
+		{
+			velocity.x = Math.max(velocity.x - ACCELERATION, -X_SPEED_CAP);
+		}
+		if (rightPressed)
+		{
+			velocity.x = Math.min(velocity.x + ACCELERATION, X_SPEED_CAP);
+		}
+		if (downPressed)
+		{
+			velocity.y = Math.max(velocity.y - ACCELERATION, -Y_SPEED_CAP);
+		}
+		if (upPressed)
+		{
+			velocity.y = Math.min(velocity.y + ACCELERATION, Y_SPEED_CAP);
+		}
 		position.x = Math.min(Math.max(position.x, LEFT_BOUND), RIGHT_BOUND);
 		position.y = Math.min(Math.max(position.y, DOWN_BOUND), UP_BOUND);
-		
-		node.setPosition(position);
+		super.update();
 	}
 	
 	public void upPressed()
 	{
-		if(!upPressed)
-		{
-			velocity.y += Y_SPEED;
-			upPressed = true;
-		}	
+		upPressed = true;
 	}
 	
 	public void downPressed()
 	{
-		if(!downPressed)
-		{
-			velocity.y += -Y_SPEED;
-			downPressed = true;
-		}
+		downPressed = true;
 	}
 	
 	public void rightPressed()
 	{
-		if(!rightPressed)
-		{
-			velocity.x += X_SPEED;
-			rightPressed = true;
-		}	
+		rightPressed = true;
 	}
 	
 	public void leftPressed()
 	{
-		if(!leftPressed)
-		{
-			velocity.x += -X_SPEED;
-			leftPressed = true;
-		}
+		leftPressed = true;
 	}
 	
 	public void upReleased()
 	{
-		if(upPressed)
-		{
-			velocity.y -= Y_SPEED;
-			upPressed = false;
-		}	
+		upPressed = false;
 	}
 	
 	public void downReleased()
 	{
-		if(downPressed)
-		{
-			velocity.y += Y_SPEED;
-			downPressed = false;
-		}	
+		downPressed = false;
 	}
 	
 	public void rightReleased()
 	{
-		if(rightPressed)
-		{
-			velocity.x -= X_SPEED;
-			rightPressed = false;
-		}	
+		rightPressed = false;
 	}
 	
 	public void leftReleased()
 	{
-		if(leftPressed)
-		{
-			velocity.x += X_SPEED;
-			leftPressed = false;
-		}
+		leftPressed = false;
 	}
 }

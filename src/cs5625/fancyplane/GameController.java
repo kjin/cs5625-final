@@ -1,19 +1,12 @@
 package cs5625.fancyplane;
 
 import java.awt.event.KeyEvent;
-import java.io.IOException;
-import java.util.ArrayList;
 
-import javax.vecmath.AxisAngle4f;
 import javax.vecmath.Color3f;
 import javax.vecmath.Point3f;
-import javax.vecmath.Quat4f;
-import javax.vecmath.Vector3f;
 
 import cs5625.gfx.json.NamedObject;
 import cs5625.gfx.light.ShadowingSpotLight;
-import cs5625.gfx.mesh.TriMesh;
-import cs5625.gfx.mesh.converter.WavefrontObjToTriMeshConverter;
 import cs5625.gfx.objcache.Value;
 import cs5625.gfx.scenetree.SceneTreeNode;
 
@@ -21,12 +14,14 @@ public class GameController {
 	private SceneTreeNode fancyScene;
 	
 	private FancyPlayer fancyPlayer;
+	private FancyBulletManager fancyBulletManager;
 	private FancyLandscape fancyLandscape;
 	
 	public GameController(SceneTreeNode rootNode)
 	{
 		fancyScene = rootNode;
 		fancyPlayer = new FancyPlayer(fancyScene);
+		fancyBulletManager = new FancyBulletManager(fancyScene);
 		fancyLandscape = new FancyLandscape(fancyScene);
     	
     	ShadowingSpotLight spotLight = new ShadowingSpotLight();
@@ -40,8 +35,9 @@ public class GameController {
 	
 	public void update()
 	{
-		fancyLandscape.update();
 		fancyPlayer.update();
+		fancyBulletManager.update();
+		fancyLandscape.update();
 	}
 	
 	public void keyPressed(KeyEvent e)
