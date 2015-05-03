@@ -38,9 +38,9 @@ public class GameController {
     	fancyScene.addChild(spotLightNode);
 	}
 	
-	public void Update()
+	public void update()
 	{
-		fancyLandscape.Update();
+		fancyLandscape.update();
 		fancyPlayer.update();
 	}
 	

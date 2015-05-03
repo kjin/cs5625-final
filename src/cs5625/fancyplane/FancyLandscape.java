@@ -43,7 +43,7 @@ public class FancyLandscape {
 		minBound = nodes[0].getPosition().y - 1.5f * WIDTH;
 	}
 	
-	public void Update()
+	public void update()
 	{
 		for (int i = 0; i < nodes.length; i++)
 		{
