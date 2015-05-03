@@ -318,7 +318,7 @@ public class FancyPlaneGame extends JFrame implements GLController, ActionListen
         GLResourceCache.v().collectGarbage();
         
         //update!
-        fancyGameController.update();
+        fancyGameController.Update();
     }
 
     @Override
