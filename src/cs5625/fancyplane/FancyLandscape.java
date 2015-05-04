@@ -47,7 +47,7 @@ public class FancyLandscape {
 		//hard coding xtoon material:
 		XToonMaterial material = new XToonMaterial();
 		
-        String textureName = "data/textures/xtoon1.png";
+        String textureName = "data/textures/xtoon3.png";
         textureName = FilenameUtils.separatorsToUnix(new File(textureName).getAbsolutePath());
         String key = ObjectCacheKey.makeKey(FileTexture2DData.class, textureName);
         material.setXToonTexture(new Reference<Texture2DData>(key));

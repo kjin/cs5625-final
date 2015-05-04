@@ -267,7 +267,15 @@ void main() {
 		}
 	/*XToon************************************/
 	} else if (materialID == XTOON_MATERIAL_ID) {
-		gl_FragColor.xyz += color;
+		vec2 dz = materialParams4.xy;
+		
+		gl_FragColor.xyz += getShadowFactor(position) * color;
+		
+		///* outline option: (doesn't look good)
+		if(length(dz) > 2.0)
+			gl_FragColor.xyz = vec3(0,0,0);
+		//*/
+		
 	} else {
 		if (!spotLight_enabled) {
 			gl_FragColor.xyz += color;
