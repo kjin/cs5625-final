@@ -9,8 +9,8 @@
 
 const int XTOON_MATERIAL_ID = 4;
 
-const int zmin = 15;
-const int zmax = 400;
+const int zmin = 50;
+const int zmax = 500;
 
 varying vec3 geom_position;
 varying vec3 geom_normal;
@@ -53,21 +53,13 @@ void main()
 	float z = (sys_projectionMatrix * vec4(geom_position, 1)).z;
 	texCoord.y = 1-log(z/zmin)/log(zmax/zmin);
 	
-	/*
-	//need to set texture to clamp so we don't have this mess:
-	if(texCoord.y >= 0.95)
-		texCoord.y = 0.95;
-		*/
-	
 	//now we can get the tex coordinate
 	vec4 color = vec4(0.2, 0.6, 0.6, 1.0);
 	if(mat_hasXToonTexture) {
 		color = texture2D(mat_xtoonTexture, texCoord);
 	}
 	
-	//color = vec4(texCoord.y, texCoord.y, texCoord.y, 1.0);
-	
-	// Encoding: (matID, normal[3], color[4], position[3], 0[5])
+	// Encoding: (matID, normal[3], color[4], position[3], 0, dpdx[2], dpdy[2])
 	gl_FragData[0] = vec4(float(XTOON_MATERIAL_ID), geom_normal);
 	gl_FragData[1] = color;
 	gl_FragData[2] = vec4(geom_position, 0.0);

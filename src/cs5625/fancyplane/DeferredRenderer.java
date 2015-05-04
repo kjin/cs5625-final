@@ -28,11 +28,14 @@ import cs5625.gfx.scenetree.SceneTreeNode;
 import cs5625.gfx.scenetree.SceneTreeTraverser;
 import cs5625.jogl.*;
 import cs5625.util.VectorMathUtil;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.media.opengl.GL;
 import javax.media.opengl.GL2;
 import javax.vecmath.*;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -732,6 +735,26 @@ public class DeferredRenderer {
         }
     }
 
+    private void useTextureClamp(Program program,
+            Holder<Texture2DData> textureHolder,
+            String hasTextureUniformName,
+            String textureUniformName,
+            int textureUnit) {
+		if (textureHolder != null) {
+			Texture2D texture = textureHolder.get().getGLResource(gl);
+			texture.wrapT = GL.GL_CLAMP_TO_EDGE;
+			texture.wrapS = GL.GL_CLAMP_TO_EDGE;
+			if (program.hasUniform(hasTextureUniformName))
+				program.getUniform(hasTextureUniformName).set1Int(1);
+			texture.useWith(TextureUnit.getTextureUnit(gl, textureUnit));
+			if (program.hasUniform(textureUniformName))
+				program.getUniform(textureUniformName).set1Int(textureUnit);
+		} else {
+			if (program.hasUniform(hasTextureUniformName))
+				program.getUniform(hasTextureUniformName).set1Int(0);
+		}
+	}
+    
     private void useCubeMap(Program program,
                             Holder<TextureCubeMapData> textureHolder,
                             String textureUniformName,
@@ -1007,7 +1030,7 @@ public class DeferredRenderer {
 
         // Set uniforms.   
         setMatrixUniforms(program);
-        useTexture(program, material.getXToonTexture(), "mat_hasXToonTexture", "mat_xtoonTexture", texUnitStart + 0);
+        useTextureClamp(program, material.getXToonTexture(), "mat_hasXToonTexture", "mat_xtoonTexture", texUnitStart + 0);
         
         // XToon only works with point lights for now
         setPointLightUniforms(program);
