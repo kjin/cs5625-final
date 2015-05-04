@@ -41,10 +41,7 @@ public class FancyPlaneGame extends JFrame implements GLController, ActionListen
     GLView glView;
     private int canvasWidth = 1024;
     private int canvasHeight = 768;
-    PerspectiveCamera camera = new PerspectiveCamera(new Point3f(0, 10, 10),
-            new Point3f(0, 0, 0),
-            new Vector3f(0, 1, 0), 0.1f, 100, 45.0f);
-    CameraController cameraController = new CameraController(camera);
+    CameraController cameraController;
     DeferredRenderer deferredRenderer = new DeferredRenderer();
     JComboBox sceneComboBox;
     JComboBox displayModeComboBox;
@@ -97,6 +94,8 @@ public class FancyPlaneGame extends JFrame implements GLController, ActionListen
     	fancyGameController = new GameController(fancyScene);
         scenes.add(new Value<SceneTreeNode>(fancyScene));
         sceneBackgroundColors.add(new Color3f(0.6f,0.8f,1.0f));
+
+    	cameraController = new CameraController(fancyGameController.getCamera());
 
         setPreferredSize(new Dimension(canvasWidth, canvasHeight));
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -313,7 +312,7 @@ public class FancyPlaneGame extends JFrame implements GLController, ActionListen
         
     	fancyGameController.update();
 
-        deferredRenderer.render(gl, sceneGraph, camera, canvasWidth, canvasHeight);
+        deferredRenderer.render(gl, sceneGraph, fancyGameController.getCamera(), canvasWidth, canvasHeight);
 
         GLResourceCache.v().collectGarbage();
     }
@@ -322,7 +321,7 @@ public class FancyPlaneGame extends JFrame implements GLController, ActionListen
     public void reshape(GLAutoDrawable glAutoDrawable, int x, int y, int width, int height) {
         canvasWidth = width;
         canvasHeight = height;
-        camera.setAspect(canvasWidth * 1.0f / canvasHeight);
+        fancyGameController.getCamera().setAspect(canvasWidth * 1.0f / canvasHeight);
     }
 
     private void updateShadowMapComboBox() {

@@ -17,7 +17,8 @@ import cs5625.gfx.scenetree.SceneTreeNode;
 public class FancyLandscape {
 	SceneTreeNode[] nodes;
 	
-	float WIDTH = 40;
+	float WIDTH = 800;
+	float HEIGHT = 400;
 	float minBound;
 	
 	public FancyLandscape(SceneTreeNode parentNode)
@@ -32,15 +33,15 @@ public class FancyLandscape {
 		
 		TriMesh fancyMesh = meshes.get(0);
 		
-		nodes = new SceneTreeNode[3];
+		nodes = new SceneTreeNode[2];
 		for (int i = 0; i < nodes.length; i++)
 		{
 			nodes[i] = new SceneTreeNode();
 			nodes[i].setData(new Value<NamedObject>(fancyMesh));
-			nodes[i].setPosition(WIDTH * (i - nodes.length / 2.0f), -10, 0);
-			//parentNode.addChild(nodes[i]);
+			nodes[i].setPosition(WIDTH * (i - nodes.length / 2.0f), 0, -HEIGHT / 2);
+			parentNode.addChild(nodes[i]);
 		}
-		minBound = nodes[0].getPosition().y - 1.5f * WIDTH;
+		minBound = nodes[0].getPosition().y - WIDTH * nodes.length / 2.0f;
 	}
 	
 	public void update()
@@ -48,7 +49,7 @@ public class FancyLandscape {
 		for (int i = 0; i < nodes.length; i++)
 		{
 			Point3f position = nodes[i].getPosition();
-			position.x = position.x - 0.5f;
+			position.x = position.x - 5f;
 			if (position.x < minBound)
 			{
 				position.x += WIDTH * nodes.length;

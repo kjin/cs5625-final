@@ -4,11 +4,15 @@ import java.awt.event.KeyEvent;
 
 import javax.vecmath.Color3f;
 import javax.vecmath.Point3f;
+import javax.vecmath.Vector3f;
 
+import cs5625.gfx.camera.Camera;
+import cs5625.gfx.camera.PerspectiveCamera;
 import cs5625.gfx.json.NamedObject;
 import cs5625.gfx.light.ShadowingSpotLight;
 import cs5625.gfx.objcache.Value;
 import cs5625.gfx.scenetree.SceneTreeNode;
+import cs5625.ui.CameraController;
 
 public class GameController {
 	private SceneTreeNode fancyScene;
@@ -17,13 +21,17 @@ public class GameController {
 	private FancyBulletManager fancyBulletManager;
 	private FancyLandscape fancyLandscape;
 	
+    private PerspectiveCamera camera;
+	
 	public GameController(SceneTreeNode rootNode)
 	{
+		// mode stuff
 		fancyScene = rootNode;
 		fancyBulletManager = new FancyBulletManager(fancyScene);
 		fancyPlayer = new FancyPlayer(fancyScene, fancyBulletManager);
 		fancyLandscape = new FancyLandscape(fancyScene);
     	
+		// light stuff
     	ShadowingSpotLight spotLight = new ShadowingSpotLight();
     	spotLight.setPosition(new Point3f(5, 25, 0));
     	spotLight.setTarget(new Point3f(0,0,0));
@@ -31,6 +39,11 @@ public class GameController {
     	SceneTreeNode spotLightNode = new SceneTreeNode();
     	spotLightNode.setData(new Value<NamedObject>(spotLight));
     	fancyScene.addChild(spotLightNode);
+    	
+    	// camera stuff
+    	camera = new PerspectiveCamera(new Point3f(0, 0, 20),
+                new Point3f(0, 0, 0),
+                new Vector3f(0, 1, 0), 0.1f, 500, 60.0f);
 	}
 	
 	public void update()
@@ -89,5 +102,10 @@ public class GameController {
 		}
 		
 		//let player know?
+	}
+	
+	public Camera getCamera()
+	{
+		return camera;
 	}
 }

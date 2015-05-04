@@ -39,8 +39,8 @@ public class FancyPlayer extends FancyObject
 	
 	final float UP_BOUND = 10;
 	final float DOWN_BOUND = -10;
-	final float RIGHT_BOUND = 10;
-	final float LEFT_BOUND = -10;
+	final float RIGHT_BOUND = 20;
+	final float LEFT_BOUND = -20;
 	
 	public FancyPlayer(SceneTreeNode parentNode, FancyBulletManager bulletManager)
 	{
