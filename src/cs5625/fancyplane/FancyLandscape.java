@@ -46,6 +46,7 @@ public class FancyLandscape {
 
 		//hard coding xtoon material:
 		XToonMaterial material = new XToonMaterial();
+		material.setOrientationBased(false);
 		
         String textureName = "data/textures/xtoon3.png";
         textureName = FilenameUtils.separatorsToUnix(new File(textureName).getAbsolutePath());

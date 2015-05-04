@@ -1031,6 +1031,7 @@ public class DeferredRenderer {
         // Set uniforms.   
         setMatrixUniforms(program);
         useTextureClamp(program, material.getXToonTexture(), "mat_hasXToonTexture", "mat_xtoonTexture", texUnitStart + 0);
+        program.setUniform("orientationOrDepth", material.getOrientationBased());
         
         // XToon only works with point lights for now
         setPointLightUniforms(program);

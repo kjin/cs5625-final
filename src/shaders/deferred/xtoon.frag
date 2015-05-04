@@ -20,6 +20,8 @@ uniform mat4 sys_projectionMatrix;
 uniform bool mat_hasXToonTexture;
 uniform sampler2D mat_xtoonTexture;
 
+uniform bool orientationOrDepth;
+
 uniform bool spotLight_enabled;
 uniform vec3 spotLight_eyePosition;
 uniform int pointLight_count;
@@ -50,9 +52,17 @@ void main()
 	
 	texCoord.x = max(dot(n,l), 0);
 	
-	//second coordinate is based on distance from view
-	float z = p.z;
-	texCoord.y = 1-log(z/zmin)/log(zmax/zmin);
+	if(orientationOrDepth) {
+		//second coordinate is based on orientation
+		vec3 v = -normalize(geom_position);
+		float r = 2.0f;
+		texCoord.y = pow(dot(n,v), r);
+	
+	} else {
+		//second coordinate is based on distance from view
+		float z = p.z;
+		texCoord.y = 1-log(z/zmin)/log(zmax/zmin);
+	}
 	
 	//now we can get the tex coordinate
 	vec4 color = vec4(0.2, 0.6, 0.6, 1.0);

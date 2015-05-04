@@ -271,10 +271,10 @@ void main() {
 		
 		gl_FragColor.xyz += getShadowFactor(position) * color;
 		
-		///* outline option: (doesn't look good)
+		/* outline option: (doesn't look good)
 		if(length(dz) > 2.0)
 			gl_FragColor.xyz = vec3(0,0,0);
-		//*/
+		*/
 		
 	} else {
 		if (!spotLight_enabled) {

@@ -1,5 +1,6 @@
 package cs5625.fancyplane;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -10,11 +11,19 @@ import javax.vecmath.Quat4f;
 import javax.vecmath.Vector2f;
 import javax.vecmath.Vector3f;
 
+import org.apache.commons.io.FilenameUtils;
+
+import cs5625.gfx.gldata.FileTexture2DData;
+import cs5625.gfx.gldata.Texture2DData;
 import cs5625.gfx.json.NamedObject;
 import cs5625.gfx.material.BlinnPhongMaterial;
 import cs5625.gfx.material.Material;
+import cs5625.gfx.material.XToonMaterial;
+import cs5625.gfx.mesh.MeshPart;
 import cs5625.gfx.mesh.TriMesh;
 import cs5625.gfx.mesh.converter.WavefrontObjToTriMeshConverter;
+import cs5625.gfx.objcache.ObjectCacheKey;
+import cs5625.gfx.objcache.Reference;
 import cs5625.gfx.objcache.Value;
 import cs5625.gfx.scenetree.SceneTreeNode;
 
@@ -45,6 +54,7 @@ public class FancyPlayer extends FancyObject
 	public FancyPlayer(SceneTreeNode parentNode, FancyBulletManager bulletManager)
 	{
 		super(parentNode, "fancy-plane", FancyTeam.Player);
+		
 		this.bulletManager = bulletManager;
 		this.velocityDampeningFactor = DAMPENING;
 		fireTime = 0;
