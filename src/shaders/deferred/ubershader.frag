@@ -17,6 +17,7 @@ const float PI = 3.14159265358979323846264;
 const int SINGLE_COLOR_MATERIAL_ID = 1;
 const int LAMBERTIAN_MATERIAL_ID = 2;
 const int BLINNPHONG_MATERIAL_ID = 3;
+const int XTOON_MATERIAL_ID = 4;
 
 const int NO_SHADOWS = 0;
 const int SIMPLE_SHADOW_MAP = 1;
@@ -264,6 +265,9 @@ void main() {
 			
 			gl_FragColor.xyz += factor * (color * nlDotProd + specular * pow(nhDotProd, exponent)) * spotLight_color / attenuation;				
 		}
+	/*XToon************************************/
+	} else if (materialID == XTOON_MATERIAL_ID) {
+		gl_FragColor.xyz += color;
 	} else {
 		if (!spotLight_enabled) {
 			gl_FragColor.xyz += color;

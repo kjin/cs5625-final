@@ -28,11 +28,14 @@ import cs5625.gfx.scenetree.SceneTreeNode;
 import cs5625.gfx.scenetree.SceneTreeTraverser;
 import cs5625.jogl.*;
 import cs5625.util.VectorMathUtil;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.media.opengl.GL;
 import javax.media.opengl.GL2;
 import javax.vecmath.*;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -732,6 +735,26 @@ public class DeferredRenderer {
         }
     }
 
+    private void useTextureClamp(Program program,
+            Holder<Texture2DData> textureHolder,
+            String hasTextureUniformName,
+            String textureUniformName,
+            int textureUnit) {
+		if (textureHolder != null) {
+			Texture2D texture = textureHolder.get().getGLResource(gl);
+			texture.wrapT = GL.GL_CLAMP_TO_EDGE;
+			texture.wrapS = GL.GL_CLAMP_TO_EDGE;
+			if (program.hasUniform(hasTextureUniformName))
+				program.getUniform(hasTextureUniformName).set1Int(1);
+			texture.useWith(TextureUnit.getTextureUnit(gl, textureUnit));
+			if (program.hasUniform(textureUniformName))
+				program.getUniform(textureUniformName).set1Int(textureUnit);
+		} else {
+			if (program.hasUniform(hasTextureUniformName))
+				program.getUniform(hasTextureUniformName).set1Int(0);
+		}
+	}
+    
     private void useCubeMap(Program program,
                             Holder<TextureCubeMapData> textureHolder,
                             String textureUniformName,
@@ -877,6 +900,8 @@ public class DeferredRenderer {
             renderMeshPart(mesh, meshPart, (LambertianMaterial) material);
         } else if (material instanceof BlinnPhongMaterial) {
             renderMeshPart(mesh, meshPart, (BlinnPhongMaterial) material);
+        } else if (material instanceof XToonMaterial) {
+        	renderMeshPart(mesh, meshPart, (XToonMaterial) material);
         } else {
             renderMeshPart(mesh, meshPart, whiteMaterial);
         }
@@ -988,6 +1013,41 @@ public class DeferredRenderer {
         disableVertexAttributes(program, mesh);
         program.unuse();
     }
+    
+    private void renderMeshPart(Mesh mesh, MeshPart meshPart, XToonMaterial material) {
+        VertexData vertexData = mesh.getVertexData().get();
+        IndexData indexData = mesh.getIndexData().get();
+
+        if (!checkVertexAttribute(vertexData, "vert_position", material)) return;
+        if (!checkVertexAttribute(vertexData, "vert_normal", material)) return;
+        boolean useTexture = material.getXToonTexture() != null;
+        if (useTexture && !checkVertexAttribute(vertexData, "vert_texCoord", material)) return;
+
+        Program program = getProgram(getVertexShaderFileName(vertexData), "src/shaders/deferred/xtoon.frag");
+        program.use();
+        bindVertexAttributes(program, mesh);
+        int texUnitStart = setupVertexShaderUniforms(program, mesh);
+
+        // Set uniforms.   
+        setMatrixUniforms(program);
+        useTextureClamp(program, material.getXToonTexture(), "mat_hasXToonTexture", "mat_xtoonTexture", texUnitStart + 0);
+        
+        // XToon only works with point lights for now
+        setPointLightUniforms(program);
+        program.setUniform("spotLight_enabled", false);
+
+        // Draw the mesh part.
+        drawElement(indexData, meshPart);
+
+        // Tear down the program.
+        unuseTexture(program, material.getXToonTexture());
+
+        tearDownVertexShaderUniforms(program, mesh);
+        disableVertexAttributes(program, mesh);
+        program.unuse();
+    }
+    
+    
 
     class ShadowMapRenderer implements SceneTreeTraverser {
         Matrix4f modelMatrix = new Matrix4f();

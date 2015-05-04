@@ -69,7 +69,7 @@ public class FancyPlaneGame extends JFrame implements GLController, ActionListen
     ArrayList<ShadowingSpotLight> spotLights = new ArrayList<ShadowingSpotLight>();
     
     // the gameplay contoller!!!!
-    GameController fancyGameController;
+    FancyGameController fancyGameController;
 
     public static void main(String[] args) {
         try {
@@ -91,7 +91,7 @@ public class FancyPlaneGame extends JFrame implements GLController, ActionListen
 
     private void run() {
     	SceneTreeNode fancyScene = new SceneTreeNode();
-    	fancyGameController = new GameController(fancyScene);
+    	fancyGameController = new FancyGameController(fancyScene);
         scenes.add(new Value<SceneTreeNode>(fancyScene));
         sceneBackgroundColors.add(new Color3f(0.6f,0.8f,1.0f));
 

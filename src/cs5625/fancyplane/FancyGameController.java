@@ -14,7 +14,7 @@ import cs5625.gfx.objcache.Value;
 import cs5625.gfx.scenetree.SceneTreeNode;
 import cs5625.ui.CameraController;
 
-public class GameController {
+public class FancyGameController {
 	private SceneTreeNode fancyScene;
 	
 	private FancyPlayer fancyPlayer;
@@ -23,7 +23,7 @@ public class GameController {
 	
     private PerspectiveCamera camera;
 	
-	public GameController(SceneTreeNode rootNode)
+	public FancyGameController(SceneTreeNode rootNode)
 	{
 		// mode stuff
 		fancyScene = rootNode;

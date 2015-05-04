@@ -1,5 +1,6 @@
 package cs5625.fancyplane;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -8,9 +9,19 @@ import javax.vecmath.Point3f;
 import javax.vecmath.Quat4f;
 import javax.vecmath.Vector3f;
 
+import org.apache.commons.io.FilenameUtils;
+
+import cs5625.gfx.gldata.FileTexture2DData;
+import cs5625.gfx.gldata.Texture2DData;
 import cs5625.gfx.json.NamedObject;
+import cs5625.gfx.material.Material;
+import cs5625.gfx.material.SingleColorMaterial;
+import cs5625.gfx.material.XToonMaterial;
+import cs5625.gfx.mesh.MeshPart;
 import cs5625.gfx.mesh.TriMesh;
 import cs5625.gfx.mesh.converter.WavefrontObjToTriMeshConverter;
+import cs5625.gfx.objcache.ObjectCacheKey;
+import cs5625.gfx.objcache.Reference;
 import cs5625.gfx.objcache.Value;
 import cs5625.gfx.scenetree.SceneTreeNode;
 
@@ -32,6 +43,18 @@ public class FancyLandscape {
 		}
 		
 		TriMesh fancyMesh = meshes.get(0);
+
+		//hard coding xtoon material:
+		XToonMaterial material = new XToonMaterial();
+		
+        String textureName = "data/textures/xtoon1.png";
+        textureName = FilenameUtils.separatorsToUnix(new File(textureName).getAbsolutePath());
+        String key = ObjectCacheKey.makeKey(FileTexture2DData.class, textureName);
+        material.setXToonTexture(new Reference<Texture2DData>(key));
+        
+		MeshPart fancyPart = fancyMesh.getPart(0);		
+		fancyPart.material = new Value<Material>(material);
+		//fancyPart.material = new Value<Material>(new SingleColorMaterial());
 		
 		nodes = new SceneTreeNode[2];
 		for (int i = 0; i < nodes.length; i++)
