@@ -23,23 +23,25 @@ public class FancyBullet extends FancyObject
 		orientationTransform.z = 0;
 		
 		lifetime = 0;
-		visible = false;
+		health = 0;
 	}
 	
 	public void update()
 	{
-		if (lifetime > 0)
+		if (health > 0)
 		{
-			visible = true;
-			orientationTransform.angle += 0.1f;
-			Quat4f quat = node.getOrientation();
-			quat.set(orientationTransform);
-			node.setOrientation(quat);
-			lifetime--;
-		}
-		else if (visible)
-		{
-			visible = false;
+			if (lifetime > 0)
+			{
+				orientationTransform.angle += 0.1f;
+				Quat4f quat = node.getOrientation();
+				quat.set(orientationTransform);
+				node.setOrientation(quat);
+				lifetime--;
+			}
+			else
+			{
+				health = 0;
+			}
 		}
 		super.update();
 	}

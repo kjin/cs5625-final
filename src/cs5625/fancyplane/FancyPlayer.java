@@ -28,10 +28,8 @@ import cs5625.gfx.objcache.Reference;
 import cs5625.gfx.objcache.Value;
 import cs5625.gfx.scenetree.SceneTreeNode;
 
-public class FancyPlayer extends FancyObject
-{
-	FancyBulletManager bulletManager;
-	
+public class FancyPlayer extends FancyShip
+{	
 	boolean upPressed = false;
 	boolean downPressed = false;
 	boolean rightPressed = false;
@@ -54,11 +52,12 @@ public class FancyPlayer extends FancyObject
 	
 	public FancyPlayer(SceneTreeNode parentNode, FancyBulletManager bulletManager)
 	{
-		super(parentNode, "fancy-player", FancyTeam.Player);
-		
-		this.bulletManager = bulletManager;
+		super(parentNode, "fancy-player", FancyTeam.Player, bulletManager);
 		this.velocityDampeningFactor = DAMPENING;
 		fireTime = 0;
+		
+		health = 50;
+		collisionRadius = 1;
 	}
 	
 	protected boolean hasSpecialMaterial()
@@ -71,7 +70,7 @@ public class FancyPlayer extends FancyObject
 		XToonMaterial material = new XToonMaterial();
 		material.setOrientationBased(true);
 		
-        String textureName = "data/textures/xtoon-gold.png";
+        String textureName = "data/textures/xtoon-player.png";
         textureName = FilenameUtils.separatorsToUnix(new File(textureName).getAbsolutePath());
         String key = ObjectCacheKey.makeKey(FileTexture2DData.class, textureName);
         material.setXToonTexture(new Reference<Texture2DData>(key));

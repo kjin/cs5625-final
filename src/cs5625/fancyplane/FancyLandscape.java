@@ -53,7 +53,7 @@ public class FancyLandscape {
         String key = ObjectCacheKey.makeKey(FileTexture2DData.class, textureName);
         material.setXToonTexture(new Reference<Texture2DData>(key));
         
-		MeshPart fancyPart = fancyMesh.getPart(0);		
+		MeshPart fancyPart = fancyMesh.getPart(0);
 		fancyPart.material = new Value<Material>(material);
 		//fancyPart.material = new Value<Material>(new SingleColorMaterial());
 		
@@ -73,7 +73,7 @@ public class FancyLandscape {
 		for (int i = 0; i < nodes.length; i++)
 		{
 			Point3f position = nodes[i].getPosition();
-			position.x = position.x - 5f;
+			position.x = position.x - 2f;
 			if (position.x < minBound)
 			{
 				position.x += WIDTH * nodes.length;
