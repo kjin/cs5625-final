@@ -92,9 +92,9 @@ public class DeferredRenderer {
      */
     SingleColorMaterial whiteMaterial = new SingleColorMaterial();
     /**
-     * Background color
+     * Background color (don't set here, set in FancyPlaneGame!)
      */
-    Color3f backgroundColor = new Color3f(0,0,0);
+    Color3f backgroundColor = new Color3f(0.2f,0.2f,0.6f);
 
     /**
      * Shadowing Spot Light Info
@@ -320,10 +320,10 @@ public class DeferredRenderer {
         program.unuse();
         
         // Bloom post processing
-        boolean bloomEnabled = true;
+        boolean bloomEnabled = false;
         if (displayMode == SCENE_RENDERERING && bloomEnabled) {
             float brightnessThreshold = 0.5f;
-            int bloomLayers = 1;
+            int bloomLayers = 4;
             int[] bloomFilterSizes = {2, 5, 10, 20};
             float[] bloomFilterStdev = {0.4f, 1, 2.5f, 4};   
             
@@ -343,7 +343,7 @@ public class DeferredRenderer {
         	screenBuffer.swap();
 
         	gaussianBlurProgram.use();
-        	for (int i = 0; i < bloomLayers; i++)
+        	for (int i = 3; i < 4; i++)
         	{
         		gaussianBlurProgram.getUniform("size").set1Int(bloomFilterSizes[i]);
         		gaussianBlurProgram.getUniform("stdev").set1Float(bloomFilterStdev[i]);

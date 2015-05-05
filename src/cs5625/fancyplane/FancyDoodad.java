@@ -35,6 +35,9 @@ public class FancyDoodad {
 	public boolean getVisibility() { return visible; }
 	public void setVisibility(boolean value) { visible = value; node.setScale(visible ? 1.0f : 0.001f); }
 	
+	public float getScale() { return node.getScale(); }
+	public void setScale(float scale) { node.setScale(scale); }
+	
 	protected SceneTreeNode node;
 	
 	public FancyDoodad(SceneTreeNode parentNode, String modelName)
@@ -79,7 +82,6 @@ public class FancyDoodad {
 			position.y += velocity.y;
 			node.setPosition(position);
 		}
-		node.setScale(visible ? 1.0f : 0.001f);
 	}
 	
 }
