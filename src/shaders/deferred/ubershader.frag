@@ -68,6 +68,9 @@ vec2 rotate(vec2 point, float angle)
 }
 
 float getShadowFactor(vec3 position) {	
+	return 1.0;
+
+/*
 	if (spotLight_shadowMode == NO_SHADOWS) {
 		return 1.0;		
 	} else if (spotLight_shadowMode == SIMPLE_SHADOW_MAP) {
@@ -168,6 +171,7 @@ float getShadowFactor(vec3 position) {
 	} else {
 		return 1.0;
 	}
+	*/
 }
 
 void main() {		

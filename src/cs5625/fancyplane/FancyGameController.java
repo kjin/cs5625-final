@@ -3,6 +3,7 @@ package cs5625.fancyplane;
 import java.awt.event.KeyEvent;
 
 import javax.vecmath.Color3f;
+import javax.vecmath.Color4f;
 import javax.vecmath.Point3f;
 import javax.vecmath.Vector3f;
 
@@ -10,6 +11,8 @@ import cs5625.gfx.camera.Camera;
 import cs5625.gfx.camera.PerspectiveCamera;
 import cs5625.gfx.json.NamedObject;
 import cs5625.gfx.light.ShadowingSpotLight;
+import cs5625.gfx.material.Material;
+import cs5625.gfx.material.SingleColorMaterial;
 import cs5625.gfx.objcache.Value;
 import cs5625.gfx.scenetree.SceneTreeNode;
 
@@ -45,6 +48,11 @@ public class FancyGameController {
     	
     	// sun stuff
     	/* make the sun out of a doodad. */
+    	Material m = new SingleColorMaterial(new Color4f(1.0f,0.5f,0.2f,1.0f));
+    	FancyDoodad fancySun = new FancyDoodad(fancyScene, "fancy-unitsphere", new Value<Material>(m));
+    	fancySun.setPosition(new Point3f(100,150,-400));
+    	fancySun.setScale(50);
+    	fancySun.update();
     	
     	// camera stuff
     	camera = new PerspectiveCamera(new Point3f(0, 0, 20),
