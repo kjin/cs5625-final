@@ -46,7 +46,7 @@ public class FancyObject {
 			e.printStackTrace();
 		}
 		TriMesh fancyMesh = meshes.get(0);
-		
+		DoWork();
 		node = new SceneTreeNode();
 		node.setData(new Value<NamedObject>(fancyMesh));
 		Quat4f rotation = new Quat4f();
@@ -72,5 +72,10 @@ public class FancyObject {
 			node.setPosition(position);
 		}
 		node.setScale(visible ? 1.0f : 0.001f);
+	}
+	
+	public void DoWork()
+	{
+		System.out.println("Base class");
 	}
 }

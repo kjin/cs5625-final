@@ -229,11 +229,11 @@ public class FancyPlaneGame extends JFrame implements GLController, ActionListen
         }
 
         controlPanel.add(new JLabel("Spot Light Camera Near:"), "9,13,9,13");
-        spotLightNearSpinnerSlider = new JSpinnerSlider(0.1, 100, 9999, 20);
+        spotLightNearSpinnerSlider = new JSpinnerSlider(0.1, 1000, 9999, 20);
         controlPanel.add(spotLightNearSpinnerSlider, "11,13,11,13");
 
         controlPanel.add(new JLabel("Spot Light Camera Far:"), "9,15,9,15");
-        spotLightFarSpinnerSlider = new JSpinnerSlider(0.1, 100, 9999, 50);
+        spotLightFarSpinnerSlider = new JSpinnerSlider(0.1, 1000, 9999, 50);
         controlPanel.add(spotLightFarSpinnerSlider, "11,15,11,15");
 
         controlPanel.add(new JLabel("SSAO:"), "1,9,1,9");
