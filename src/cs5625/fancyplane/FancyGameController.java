@@ -39,6 +39,9 @@ public class FancyGameController {
     	spotLightNode.setData(new Value<NamedObject>(spotLight));
     	//fancyScene.addChild(spotLightNode);
     	
+    	// sun stuff
+    	/* make the sun out of a doodad. */
+    	
     	// camera stuff
     	camera = new PerspectiveCamera(new Point3f(0, 0, 20),
                 new Point3f(0, 0, 0),
