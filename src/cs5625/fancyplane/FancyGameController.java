@@ -12,7 +12,6 @@ import cs5625.gfx.json.NamedObject;
 import cs5625.gfx.light.ShadowingSpotLight;
 import cs5625.gfx.objcache.Value;
 import cs5625.gfx.scenetree.SceneTreeNode;
-import cs5625.ui.CameraController;
 
 public class FancyGameController {
 	private SceneTreeNode fancyScene;
@@ -35,10 +34,10 @@ public class FancyGameController {
     	ShadowingSpotLight spotLight = new ShadowingSpotLight();
     	spotLight.setPosition(new Point3f(5, 25, 0));
     	spotLight.setTarget(new Point3f(0,0,0));
-    	spotLight.setColor(new Color3f(1.0f,1.0f,1.0f));
+    	spotLight.setColor(new Color3f(0.6f,0.6f,0.2f));
     	SceneTreeNode spotLightNode = new SceneTreeNode();
     	spotLightNode.setData(new Value<NamedObject>(spotLight));
-    	fancyScene.addChild(spotLightNode);
+    	//fancyScene.addChild(spotLightNode);
     	
     	// camera stuff
     	camera = new PerspectiveCamera(new Point3f(0, 0, 20),

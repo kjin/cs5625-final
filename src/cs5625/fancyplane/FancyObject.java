@@ -26,6 +26,10 @@ import cs5625.gfx.objcache.Value;
 import cs5625.gfx.scenetree.SceneTreeNode;
 
 public class FancyObject {
+	protected float collisionRadius;
+	public float getCollisionRadius() { return collisionRadius; }
+	public void setCollisionRadius(float value) { collisionRadius = value; }
+	
 	protected Vector3f velocity;
 	public Vector3f getVelocity() { return velocity; }
 	public void setVelocity(Vector3f value) { velocity.set(value); }
@@ -57,16 +61,6 @@ public class FancyObject {
 			e.printStackTrace();
 		}
 		TriMesh fancyMesh = meshes.get(0);
-		/*
-		//hard coding xtoon material:
-		XToonMaterial material = new XToonMaterial();
-		material.setOrientationBased(true);
-		
-        String textureName = "data/textures/xtoon-redship.png";
-        textureName = FilenameUtils.separatorsToUnix(new File(textureName).getAbsolutePath());
-        String key = ObjectCacheKey.makeKey(FileTexture2DData.class, textureName);
-        material.setXToonTexture(new Reference<Texture2DData>(key));
-        */
 		
 		if(this.hasSpecialMaterial()) {
 			MeshPart fancyPart = meshes.get(0).getPart(0);		
@@ -82,6 +76,7 @@ public class FancyObject {
 		
 		this.team = team;
 		
+		collisionRadius = 0;
 		velocityDampeningFactor = 1.0f;
 		velocity = new Vector3f(0,0,0);
 		position = node.getPosition();
