@@ -19,6 +19,7 @@ public class FancyGameController {
 	private FancyPlayer fancyPlayer;
 	private FancyBulletManager fancyBulletManager;
 	private FancyLandscape fancyLandscape;
+	private FancyEnemyManager fancyEnemyManager;
 	
     private PerspectiveCamera camera;
 	
@@ -28,6 +29,7 @@ public class FancyGameController {
 		fancyScene = rootNode;
 		fancyBulletManager = new FancyBulletManager(fancyScene);
 		fancyPlayer = new FancyPlayer(fancyScene, fancyBulletManager);
+		fancyEnemyManager = new FancyEnemyManager(fancyScene, fancyBulletManager);
 		fancyLandscape = new FancyLandscape(fancyScene);
     	
 		// light stuff
@@ -51,9 +53,52 @@ public class FancyGameController {
 	public void update()
 	{
 		fancyPlayer.update();
-		//for (int i = 0; i < )
 		fancyBulletManager.update();
+		fancyEnemyManager.update();
 		fancyLandscape.update();
+		
+		// Collision handling
+		FancyBullet[] bullets = fancyBulletManager.getBullets();
+		FancyEnemy[] enemies = fancyEnemyManager.getEnemies();
+		// Player - Enemy
+		if (fancyPlayer.health > 0)
+		{
+			for (int i = 0; i < enemies.length; i++)
+			{
+				if (enemies[i].health > 0 && fancyPlayer.collidesWith(enemies[i]))
+				{
+					fancyPlayer.setHealth(fancyPlayer.getHealth() - 1);
+					enemies[i].setHealth(enemies[i].getHealth() - 1);
+				}
+			}
+		}
+		// Bullet - Ship
+		for (int i = 0; i < bullets.length; i++)
+		{
+			if (bullets[i].health > 0)
+			{
+				if (fancyPlayer.health > 0 && fancyPlayer.collidesWith(bullets[i]))
+				{
+					fancyPlayer.setHealth(fancyPlayer.getHealth() - 1);
+					bullets[i].setHealth(bullets[i].getHealth() - 1);
+				}
+				if (bullets[i].health > 0)
+				{
+					for (int j = 0; j < enemies.length; j++)
+					{
+						if (enemies[j].health > 0 && enemies[j].collidesWith(bullets[i]))
+						{
+							enemies[j].setHealth(enemies[j].getHealth() - 1);
+							bullets[i].setHealth(bullets[i].getHealth() - 1);
+						}
+						if (bullets[i].health <= 0)
+						{
+							break;
+						}
+					}
+				}
+			}
+		}
 	}
 	
 	public void keyPressed(KeyEvent e)

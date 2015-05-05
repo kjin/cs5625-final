@@ -9,23 +9,20 @@ import javax.vecmath.Point3f;
 import javax.vecmath.Quat4f;
 import javax.vecmath.Vector3f;
 
-import org.apache.commons.io.FilenameUtils;
-
-import cs5625.gfx.gldata.FileTexture2DData;
-import cs5625.gfx.gldata.Texture2DData;
 import cs5625.gfx.json.NamedObject;
 import cs5625.gfx.material.Material;
-import cs5625.gfx.material.XToonMaterial;
 import cs5625.gfx.mesh.MeshPart;
 import cs5625.gfx.mesh.TriMesh;
 import cs5625.gfx.mesh.converter.WavefrontObjToTriMeshConverter;
 import cs5625.gfx.objcache.Holder;
-import cs5625.gfx.objcache.ObjectCacheKey;
-import cs5625.gfx.objcache.Reference;
 import cs5625.gfx.objcache.Value;
 import cs5625.gfx.scenetree.SceneTreeNode;
 
 public class FancyObject {
+	protected int health;
+	public int getHealth() { return health; }
+	public void setHealth(int value) { health = value; node.setScale(health > 0 ? 1.0f : 0.001f); }
+	
 	protected float collisionRadius;
 	public float getCollisionRadius() { return collisionRadius; }
 	public void setCollisionRadius(float value) { collisionRadius = value; }
@@ -41,10 +38,6 @@ public class FancyObject {
 	protected Point3f position;
 	public Point3f getPosition() { return position; }
 	public void setPosition(Point3f value) { position.set(value); }
-	
-	protected boolean visible;
-	public boolean getVisibility() { return visible; }
-	public void setVisibility(boolean value) { visible = value; node.setScale(visible ? 1.0f : 0.001f); }
 	
 	protected FancyTeam team;
 	public FancyTeam getTeam() { return team; }
@@ -78,9 +71,9 @@ public class FancyObject {
 		
 		collisionRadius = 0;
 		velocityDampeningFactor = 1.0f;
+		health = 1;
 		velocity = new Vector3f(0,0,0);
 		position = node.getPosition();
-		visible = true;
 	}
 	
 	protected boolean hasSpecialMaterial()
@@ -95,19 +88,19 @@ public class FancyObject {
 	
 	public void update()
 	{
-		if (visible)
+		if (health > 0)
 		{
 			velocity.scale(velocityDampeningFactor);
 			position.x += velocity.x;
 			position.y += velocity.y;
 			node.setPosition(position);
 		}
-		node.setScale(visible ? 1.0f : 0.001f);
+		node.setScale(health > 0 ? 1.0f : 0.001f);
 	}
 	
 	public boolean collidesWith(FancyObject other)
 	{
-		if (this.visible && other.visible && this.team != other.team)
+		if (this.health > 0 && other.health > 0 && this.team != other.team)
 		{
 			float x = this.position.x - other.position.x;
 			float y = this.position.y - other.position.y;

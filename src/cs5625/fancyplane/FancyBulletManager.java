@@ -6,8 +6,8 @@ import cs5625.gfx.scenetree.SceneTreeNode;
 
 public class FancyBulletManager
 {
-	int NUM_BULLETS = 40;
-	int BULLET_LIFETIME = 100;
+	int NUM_BULLETS = 20;
+	int BULLET_LIFETIME = 50;
 	
 	SceneTreeNode bulletParentNode;
 	FancyBullet[] bullets;
@@ -36,7 +36,7 @@ public class FancyBulletManager
 	
 	public void fireBullet(FancyObject plane)
 	{
-		if (!bullets[currentIndex].visible)
+		if (bullets[currentIndex].getHealth() <= 0)
 		{
 			if (plane.getTeam() == FancyTeam.Player)
 			{
@@ -45,6 +45,7 @@ public class FancyBulletManager
 				bullets[currentIndex].setPosition(plane.getPosition());
 				bullets[currentIndex].setVelocity(velocity);
 				bullets[currentIndex].setLifetime(BULLET_LIFETIME);
+				bullets[currentIndex].setHealth(1);
 				currentIndex++;
 				if (currentIndex == bullets.length)
 				{
@@ -52,5 +53,10 @@ public class FancyBulletManager
 				}
 			}
 		}
+	}
+	
+	public FancyBullet[] getBullets()
+	{
+		return bullets;
 	}
 }
