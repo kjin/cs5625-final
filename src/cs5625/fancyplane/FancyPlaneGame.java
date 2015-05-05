@@ -93,7 +93,7 @@ public class FancyPlaneGame extends JFrame implements GLController, ActionListen
     	SceneTreeNode fancyScene = new SceneTreeNode();
     	fancyGameController = new FancyGameController(fancyScene);
         scenes.add(new Value<SceneTreeNode>(fancyScene));
-        sceneBackgroundColors.add(new Color3f(0.6f,0.8f,1.0f));
+        sceneBackgroundColors.add(new Color3f(1.0f,1.0f,1.0f));
 
     	cameraController = new CameraController(fancyGameController.getCamera());
 
