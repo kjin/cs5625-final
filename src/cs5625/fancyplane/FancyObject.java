@@ -19,6 +19,7 @@ import cs5625.gfx.material.XToonMaterial;
 import cs5625.gfx.mesh.MeshPart;
 import cs5625.gfx.mesh.TriMesh;
 import cs5625.gfx.mesh.converter.WavefrontObjToTriMeshConverter;
+import cs5625.gfx.objcache.Holder;
 import cs5625.gfx.objcache.ObjectCacheKey;
 import cs5625.gfx.objcache.Reference;
 import cs5625.gfx.objcache.Value;
@@ -61,6 +62,11 @@ public class FancyObject {
 		}
 		TriMesh fancyMesh = meshes.get(0);
 		
+		if(this.hasSpecialMaterial()) {
+			MeshPart fancyPart = meshes.get(0).getPart(0);		
+			fancyPart.material = this.getSpecialMaterial();
+		}
+		
 		node = new SceneTreeNode();
 		node.setData(new Value<NamedObject>(fancyMesh));
 		Quat4f rotation = new Quat4f();
@@ -75,6 +81,16 @@ public class FancyObject {
 		velocity = new Vector3f(0,0,0);
 		position = node.getPosition();
 		visible = true;
+	}
+	
+	protected boolean hasSpecialMaterial()
+	{
+		return false;		
+	}
+	
+	protected Holder<Material> getSpecialMaterial()
+	{
+		return null;
 	}
 	
 	public void update()

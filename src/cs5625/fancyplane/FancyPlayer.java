@@ -22,6 +22,7 @@ import cs5625.gfx.material.XToonMaterial;
 import cs5625.gfx.mesh.MeshPart;
 import cs5625.gfx.mesh.TriMesh;
 import cs5625.gfx.mesh.converter.WavefrontObjToTriMeshConverter;
+import cs5625.gfx.objcache.Holder;
 import cs5625.gfx.objcache.ObjectCacheKey;
 import cs5625.gfx.objcache.Reference;
 import cs5625.gfx.objcache.Value;
@@ -58,6 +59,24 @@ public class FancyPlayer extends FancyObject
 		this.bulletManager = bulletManager;
 		this.velocityDampeningFactor = DAMPENING;
 		fireTime = 0;
+	}
+	
+	protected boolean hasSpecialMaterial()
+	{
+		return true;		
+	}
+	
+	protected Holder<Material> getSpecialMaterial()
+	{
+		XToonMaterial material = new XToonMaterial();
+		material.setOrientationBased(true);
+		
+        String textureName = "data/textures/xtoon-gold.png";
+        textureName = FilenameUtils.separatorsToUnix(new File(textureName).getAbsolutePath());
+        String key = ObjectCacheKey.makeKey(FileTexture2DData.class, textureName);
+        material.setXToonTexture(new Reference<Texture2DData>(key));
+        
+        return new Value<Material>(material);
 	}
 	
 	public void update()
