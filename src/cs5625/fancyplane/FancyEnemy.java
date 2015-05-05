@@ -56,7 +56,7 @@ public class FancyEnemy extends FancyShip
 	{
 		if (health > 0)
 		{
-			velocity.set(-0.2f, (float)Math.sin(time / 20.0f) / 25.0f, 0);
+			velocity.set(-0.2f, (float)Math.sin(time / 20.0f) / 15.0f, 0);
 			if (position.x < -30) // Left kill wall
 			{
 				health = 0;

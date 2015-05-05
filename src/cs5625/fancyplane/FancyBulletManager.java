@@ -42,6 +42,7 @@ public class FancyBulletManager
 			{
 				Vector3f velocity = bullets[currentIndex].getVelocity();
 				velocity.x = 1.0f;
+				bullets[currentIndex].setTeam(FancyTeam.Player);
 				bullets[currentIndex].setPosition(plane.getPosition());
 				bullets[currentIndex].setVelocity(velocity);
 				bullets[currentIndex].setLifetime(BULLET_LIFETIME);

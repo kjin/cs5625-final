@@ -15,11 +15,12 @@ import cs5625.gfx.scenetree.SceneTreeNode;
 
 public class FancyGameController {
 	private SceneTreeNode fancyScene;
-	
-	private FancyPlayer fancyPlayer;
-	private FancyBulletManager fancyBulletManager;
+
 	private FancyLandscape fancyLandscape;
+	private FancyBulletManager fancyBulletManager;
+	private FancyPlayer fancyPlayer;
 	private FancyEnemyManager fancyEnemyManager;
+	private FancyParticleSystem fancyParticleSystem;
 	
     private PerspectiveCamera camera;
 	
@@ -27,10 +28,11 @@ public class FancyGameController {
 	{
 		// mode stuff
 		fancyScene = rootNode;
+		fancyLandscape = new FancyLandscape(fancyScene);
 		fancyBulletManager = new FancyBulletManager(fancyScene);
 		fancyPlayer = new FancyPlayer(fancyScene, fancyBulletManager);
 		fancyEnemyManager = new FancyEnemyManager(fancyScene, fancyBulletManager);
-		fancyLandscape = new FancyLandscape(fancyScene);
+		fancyParticleSystem = new FancyParticleSystem(fancyScene);
     	
 		// light stuff
     	ShadowingSpotLight spotLight = new ShadowingSpotLight();
@@ -56,10 +58,12 @@ public class FancyGameController {
 		fancyBulletManager.update();
 		fancyEnemyManager.update();
 		fancyLandscape.update();
+		fancyParticleSystem.update();
 		
 		// Collision handling
 		FancyBullet[] bullets = fancyBulletManager.getBullets();
 		FancyEnemy[] enemies = fancyEnemyManager.getEnemies();
+		Vector3f temp = new Vector3f();
 		// Player - Enemy
 		if (fancyPlayer.health > 0)
 		{
@@ -67,8 +71,7 @@ public class FancyGameController {
 			{
 				if (enemies[i].health > 0 && fancyPlayer.collidesWith(enemies[i]))
 				{
-					fancyPlayer.setHealth(fancyPlayer.getHealth() - 1);
-					enemies[i].setHealth(enemies[i].getHealth() - 1);
+					doCollisionAftermath(fancyPlayer, enemies[i], true, true);
 				}
 			}
 		}
@@ -79,8 +82,7 @@ public class FancyGameController {
 			{
 				if (fancyPlayer.health > 0 && fancyPlayer.collidesWith(bullets[i]))
 				{
-					fancyPlayer.setHealth(fancyPlayer.getHealth() - 1);
-					bullets[i].setHealth(bullets[i].getHealth() - 1);
+					doCollisionAftermath(fancyPlayer, bullets[i], true, false);
 				}
 				if (bullets[i].health > 0)
 				{
@@ -88,8 +90,7 @@ public class FancyGameController {
 					{
 						if (enemies[j].health > 0 && enemies[j].collidesWith(bullets[i]))
 						{
-							enemies[j].setHealth(enemies[j].getHealth() - 1);
-							bullets[i].setHealth(bullets[i].getHealth() - 1);
+							doCollisionAftermath(enemies[j], bullets[i], true, false);
 						}
 						if (bullets[i].health <= 0)
 						{
@@ -98,6 +99,30 @@ public class FancyGameController {
 					}
 				}
 			}
+		}
+	}
+	
+	Vector3f temp = new Vector3f(); // for below
+	
+	private void doCollisionAftermath(FancyObject o1, FancyObject o2, boolean o1MakesParticles, boolean o2MakesParticles)
+	{
+		o1.setHealth(o1.getHealth() - 1);
+		o2.setHealth(o2.getHealth() - 1);
+		if (o1MakesParticles && o1.getHealth() == 0)
+		{
+			temp.set(o2.getVelocity());
+			temp.setY(temp.y - 1);
+			temp.normalize();
+			temp.scale(0.05f);
+			fancyParticleSystem.releaseParticles(20, o1.getPosition(), temp, 0.5f);
+		}
+		if (o2MakesParticles && o2.getHealth() == 0)
+		{
+			temp.set(o1.getVelocity());
+			temp.setY(temp.y - 1);
+			temp.normalize();
+			temp.scale(0.05f);
+			fancyParticleSystem.releaseParticles(20, o2.getPosition(), temp, 0.5f);
 		}
 	}
 	
