@@ -274,6 +274,8 @@ public class DeferredRenderer {
     		"src/shaders/bloom_threshold.vert", "src/shaders/bloom_threshold.frag");
     Reference<ProgramData> gaussianBlurProgramRef = FileProgramData.makeReference(
             "src/shaders/gaussian_blur.vert", "src/shaders/gaussian_blur.frag");
+    Reference<ProgramData> sobelEdgeProgramRef = FileProgramData.makeReference(
+    		"src/shaders/sobel_edge.vert", "src/shaders/sobel_edge.frag");
 
 
     public void render(GL2 gl, SceneTreeNode node, Camera camera, int width, int height) {
@@ -318,6 +320,28 @@ public class DeferredRenderer {
             gBuffer.colorBuffers[i].getReadBuffer().unuse();
         }
         program.unuse();
+        
+        // Sobel edge post processing
+        boolean edgeEnabled = true;
+        if (edgeEnabled) {
+            float threshold = 0.2f;
+            float contrast = 10f;
+            int offset = 1;   
+        	
+        	Program sobelEdgeProgram = sobelEdgeProgramRef.get().getGLResource(gl);
+        	sobelEdgeProgram.use();
+        	
+        	sobelEdgeProgram.getUniform("threshold").set1Float(threshold);
+        	sobelEdgeProgram.getUniform("contrast").set1Float(contrast);
+        	sobelEdgeProgram.getUniform("offset").set1Int(offset);
+        	
+        	useTextureRect(gl, sobelEdgeProgram, "texture", screenBuffer.colorBuffers[0].getReadBuffer(), 0);
+        	renderFullScreenQuadToTextureRectBuffer(gl, sobelEdgeProgram,
+    				screenBuffer.colorBuffers[0].getWidth(), screenBuffer.colorBuffers[0].getHeight(), 
+    				screenBuffer, true, true);
+
+        	sobelEdgeProgram.unuse();
+        }
         
         // Bloom post processing
         boolean bloomEnabled = false;
