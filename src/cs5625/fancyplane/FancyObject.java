@@ -63,7 +63,7 @@ public class FancyObject {
 		TriMesh fancyMesh = meshes.get(0);
 		
 		if(this.hasSpecialMaterial()) {
-			MeshPart fancyPart = meshes.get(0).getPart(0);		
+			MeshPart fancyPart = meshes.get(0).getPart(0);
 			fancyPart.material = this.getSpecialMaterial();
 		}
 		

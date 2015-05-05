@@ -54,7 +54,7 @@ public class FancyPlayer extends FancyObject
 	
 	public FancyPlayer(SceneTreeNode parentNode, FancyBulletManager bulletManager)
 	{
-		super(parentNode, "fancy-plane", FancyTeam.Player);
+		super(parentNode, "fancy-player", FancyTeam.Player);
 		
 		this.bulletManager = bulletManager;
 		this.velocityDampeningFactor = DAMPENING;
@@ -63,7 +63,7 @@ public class FancyPlayer extends FancyObject
 	
 	protected boolean hasSpecialMaterial()
 	{
-		return true;		
+		return true;
 	}
 	
 	protected Holder<Material> getSpecialMaterial()
