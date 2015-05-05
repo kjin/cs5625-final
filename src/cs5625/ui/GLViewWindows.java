@@ -24,7 +24,7 @@ public class GLViewWindows extends GLCanvas implements GLView {
     private float targetFrameRate;
 
     public GLViewWindows() {
-        this(60);
+        this(40);
     }
 
     private static GLCapabilities getDefaultCapabilities() {
