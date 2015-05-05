@@ -71,6 +71,7 @@ public class DeferredRenderer {
     GL2 gl;
     Fbo fbo;
     TextureRectBufferCollection gBuffer = new TextureRectBufferCollection(4, true);
+    TextureRectBufferCollection bBuffer = new TextureRectBufferCollection(1, true);
     TextureRectBufferCollection screenBuffer = new TextureRectBufferCollection(1, false);
     TextureRectBufferCollection spotLightBuffer = new TextureRectBufferCollection(1, false);
     TextureRectBufferCollection ambientOcclusionBuffer = new TextureRectBufferCollection(1, false);
@@ -268,219 +269,111 @@ public class DeferredRenderer {
             "src/shaders/deferred/ssao.vert", "src/shaders/deferred/ssao.frag");
     Reference<ProgramData> productProgramRef = FileProgramData.makeReference(
             "src/shaders/product.vert", "src/shaders/product.frag");
+    
+    Reference<ProgramData> bloomThresholdProgramRef = FileProgramData.makeReference(
+    		"src/shaders/bloom_threshold.vert", "src/shaders/bloom_threshold.frag");
+    Reference<ProgramData> gaussianBlurProgramRef = FileProgramData.makeReference(
+            "src/shaders/gaussian_blur.vert", "src/shaders/gaussian_blur.frag");
 
 
     public void render(GL2 gl, SceneTreeNode node, Camera camera, int width, int height) {
         this.gl = gl;
 
         if (fbo == null) fbo = new Fbo(gl);
-
+        
         // Collect all the spot lights.
         spotLightInfos.clear();
         node.letTraverse(spotLightCollector);
-
-        // Render shadow maps.
-        for (ShadowingSpotLightInfo spotLightInfo : spotLightInfos) {
-            // Render the shadow map.
-            spotLightInfo.allocate(gl);
-            spotLightInfo.setupCamera(viewMatrix, inverseViewMatrix, projectionMatrix);
-            fbo.bind();
-            spotLightInfo.shadowBuffer.attachTo(fbo);
-            fbo.drawTo(0, 1);
-            renderSceneToShadowMap(gl, node,
-                    spotLightInfo.light.getShadowMapResolution(),
-                    spotLightInfo.light.getShadowMapResolution());
-            fbo.drawToNone();
-            fbo.detachAll();
-            fbo.unbind();
-            spotLightInfo.shadowBuffer.swap();
-        }
-
-        if (displayMode != SHADOW_MAP) {
-            // Render the G-Buffer
-            setupCamera(camera);
-            gBuffer.allocate(gl, width, height);
-            fbo.bind();
-            gBuffer.attachTo(fbo);
-            fbo.drawTo(0, 4);
-            renderSceneToColorBuffer(gl, node, width, height);
-            fbo.drawToNone();
-            fbo.detachAll();
-            fbo.unbind();
-            gBuffer.swap();
-
-            // Render the ambient occlusion buffer.
-            if (ssaoEnabled || displayMode == AMBIENT_OCCULSION_MAP) {
-                ambientOcclusionBuffer.allocate(gl, width, height);
-                Program program = ssaoProgramRef.get().getGLResource(gl);
-                program.use();
-                for (int i = 0; i < 4; i++) {
-                    useTextureRect(gl, program,
-                            String.format("gbuf_materialParams%d", i+1),
-                            gBuffer.colorBuffers[i].getReadBuffer(),
-                            i);
-                }
-                program.setUniform("gbuf_width", width);
-                program.setUniform("gbuf_height", height);
-                program.setUniform("ssao_radius", ssaoRadius);
-                program.setUniform("ssao_depthBias", ssaoDepthBias);
-                program.setUniform("ssao_sampleCount", ssaoSampleCount);
-                program.setUniform("sys_projectionMatrix", projectionMatrix);
-                renderFulScreenQuadToTextureRectBuffer(gl, program, width, height, ambientOcclusionBuffer, true, true);
-                for (int i = 0; i < 4; i++) {
-                    gBuffer.colorBuffers[i].getReadBuffer().unuse();
-                }
-                program.unuse();
-            }
-        }
+	
+        // Render the G-Buffer
+        setupCamera(camera);
+        gBuffer.allocate(gl, width, height);
+        fbo.bind();
+        gBuffer.attachTo(fbo);
+        fbo.drawTo(0, 4);
+        renderSceneToColorBuffer(gl, node, width, height);
+        fbo.drawToNone();
+        fbo.detachAll();
+        fbo.unbind();
+        gBuffer.swap();
 
         screenBuffer.allocate(gl, width, height);
-        if (displayMode == SCENE_RENDERERING) {
-            // Render the scene without spot lights.
-            Program program = uberShaderProgramRef.get().getGLResource(gl);
-            program.use();
-            computePointLightInfo(node);
-            setPointLightUniforms(program);
-            program.setUniform("spotLight_enabled", false);
-            program.setUniform("backgroundColor", backgroundColor);
-            for (int i = 0; i < 4; i++) {
-                useTextureRect(gl, program,
-                        String.format("gbuf_materialParams%d", i+1),
-                        gBuffer.colorBuffers[i].getReadBuffer(),
-                        i);
-            }
-            renderFulScreenQuadToTextureRectBuffer(gl, program, width, height, screenBuffer, true, false);
-            for (int i = 0; i < 4; i++) {
-                gBuffer.colorBuffers[i].getReadBuffer().unuse();
-            }
-            program.unuse();
+        
+        // Render the scene.
+        Program program = uberShaderProgramRef.get().getGLResource(gl);
+        program.use();
+        computePointLightInfo(node);
+        setPointLightUniforms(program);
+        program.setUniform("spotLight_enabled", false);
+        program.setUniform("backgroundColor", backgroundColor);
+        for (int i = 0; i < 4; i++) {
+            useTextureRect(gl, program,
+                    String.format("gbuf_materialParams%d", i+1),
+                    gBuffer.colorBuffers[i].getReadBuffer(),
+                    i);
+        }
+        renderFulScreenQuadToTextureRectBuffer(gl, program, width, height, screenBuffer, true, false);
+        screenBuffer.swap();
+        for (int i = 0; i < 4; i++) {
+            gBuffer.colorBuffers[i].getReadBuffer().unuse();
+        }
+        program.unuse();
+        
+        // Bloom post processing
+        boolean bloomEnabled = true;
+        if (displayMode == SCENE_RENDERERING && bloomEnabled) {
+            float brightnessThreshold = 0.5f;
+            int bloomLayers = 1;
+            int[] bloomFilterSizes = {2, 5, 10, 20};
+            float[] bloomFilterStdev = {0.4f, 1, 2.5f, 4};   
+            
+        	// Allocate an extra texture to store the original image.
+        	bBuffer.allocate(gl, width, height);
+        	
+        	Program bloomThresholdProgram = bloomThresholdProgramRef.get().getGLResource(gl);
+        	Program gaussianBlurProgram = gaussianBlurProgramRef.get().getGLResource(gl);
+        	
+        	bloomThresholdProgram.use();
+        	bloomThresholdProgram.getUniform("brightness").set1Float(brightnessThreshold);
+        	
+        	useTextureRect(gl, bloomThresholdProgram, "texture", screenBuffer.colorBuffers[0].getReadBuffer(), 0);
+        	renderFullScreenQuadToTextureRectBuffer(gl, bloomThresholdProgram,
+    				bBuffer.colorBuffers[0].getWidth(), bBuffer.colorBuffers[0].getHeight(), bBuffer, true, true);
+        	bloomThresholdProgram.unuse();
+        	screenBuffer.swap();
 
-            // Render the effect of spot lights.
-            setupCamera(camera);
-            for (ShadowingSpotLightInfo info : spotLightInfos) {
-                program.use();
-                program.setUniform("sys_inverseViewMatrix", inverseViewMatrix);
-                program.setUniform("light_hasSpotLight", true);
-                program.setUniform("backgroundColor", new Color3f(0,0,0));
-                program.setUniform("pointLight_count", 0);
-                info.setupCamera(spotLightViewMatrix, spotLightInverseViewMatrix, spotLightProjectionMatrix);
-                program.setUniform("spotLight_viewMatrix", spotLightViewMatrix);
-                program.setUniform("spotLight_projectionMatrix", spotLightProjectionMatrix);
-                program.setUniform("spotLight_shadowMapWidth", info.light.getShadowMapResolution());
-                program.setUniform("spotLight_shadowMapHeight", info.light.getShadowMapResolution());
-                program.setUniform("spotLight_shadowMode", info.light.getShadowMapMode());
-                program.setUniform("spotLight_shadowMapConstantBias", info.light.getShadowMapConstantBias());
-                program.setUniform("spotLight_shadowMapBiasScale", info.light.getShadowMapBiasScale());
-                program.setUniform("spotLight_enabled", true);
-                program.setUniform("spotLight_pcfWindowWidth", pcfWindowWidth);
-                program.setUniform("spotLight_pcfKernelSampleCount", pcfKernelSampleCount);
-                program.setUniform("spotLight_lightWidth", info.light.getLightWidth());
-                program.setUniform("spotLight_near", info.light.getNear());
-                program.setUniform("spotLight_pcssBlockerKernelSampleCount", pcssBlockerKernelSampleCount);
-                program.setUniform("spotLight_pcssPenumbraKernelSampleCount", pcssPenumbraKernelSampleCount);
-                program.setUniform("spotLight_fov", (float)(Math.PI*info.light.getFov()/180));
-
-                program.setUniform("spotLight_color", info.light.getColor());
-                program.setUniform("spotLight_attenuation",
-                        info.light.getConstantAttenuation(),
-                        info.light.getLinearAttenuation(),
-                        info.light.getQuadraticAttenuation());
-                Point3f lightPosition = info.lightNode.transformPointToWorldSpace(info.light.getPosition());
-                viewMatrix.transform(lightPosition);
-                program.setUniform("spotLight_eyePosition", lightPosition);
-
-                for (int i = 0; i < 4; i++) {
-                    useTextureRect(gl, program,
-                            String.format("gbuf_materialParams%d", i+1),
-                            gBuffer.colorBuffers[i].getReadBuffer(),
-                            i);
-                }
-                info.shadowBuffer.colorBuffers[0].getReadBuffer().minFilter = GL2.GL_NEAREST;
-                info.shadowBuffer.colorBuffers[0].getReadBuffer().magFilter = GL2.GL_NEAREST;
-                useTextureRect(gl, program, "spotLight_shadowMap", info.shadowBuffer.colorBuffers[0].getReadBuffer(), 5);
-
-                spotLightBuffer.allocate(gl, width, height);
-                renderFulScreenQuadToTextureRectBuffer(gl, program, width, height, spotLightBuffer, true, true);
-
-                info.shadowBuffer.colorBuffers[0].getReadBuffer().unuse();
-                for (int i = 0; i < 4; i++) {
-                    gBuffer.colorBuffers[i].getReadBuffer().unuse();
-                }
-                program.unuse();
-
-                program = copyProgramRef.get().getGLResource(gl);
-                program.use();
-                useTextureRect(gl, program, "texture", spotLightBuffer.colorBuffers[0].getReadBuffer(), 0);
-                gl.glEnable(GL2.GL_BLEND);
-                gl.glBlendFunc(GL2.GL_ONE, GL2.GL_ONE);
-                renderFulScreenQuadToTextureRectBuffer(gl, program, width, height, screenBuffer, false, false);
-                gl.glDisable(GL2.GL_BLEND);
-                spotLightBuffer.colorBuffers[0].getReadBuffer().unuse();
-                program.unuse();
-            }
-            screenBuffer.swap();
-
-            if (ssaoEnabled) {
-                program = productProgramRef.get().getGLResource(gl);
-                program.use();
-                useTextureRect(gl, program, "texture0", screenBuffer.colorBuffers[0].getReadBuffer(), 0);
-                useTextureRect(gl, program, "texture1", ambientOcclusionBuffer.colorBuffers[0].getReadBuffer(), 1);
-                renderFulScreenQuadToTextureRectBuffer(gl, program, width, height, screenBuffer, true, false);
-                screenBuffer.colorBuffers[0].getReadBuffer().unuse();
-                ambientOcclusionBuffer.colorBuffers[0].getReadBuffer().unuse();
-                program.unuse();
-                screenBuffer.swap();
-            }
-        } else if (displayMode >= GBUFFER_COLOR_BUFFER_0 && displayMode <= GBUFFER_COLOR_BUFFER_3) {
-            int colorBufferIndex = displayMode - GBUFFER_COLOR_BUFFER_0;
-            Program program = copyProgramRef.get().getGLResource(gl);
-            program.use();
-            useTextureRect(gl, program, "texture", gBuffer.colorBuffers[colorBufferIndex].getReadBuffer(), 0);
-            renderFulScreenQuadToTextureRectBuffer(gl, program, width, height, screenBuffer, true, true);
-            gBuffer.colorBuffers[colorBufferIndex].getReadBuffer().unuse();
-            program.unuse();
-        } else if (displayMode == SHADOW_MAP) {
-            if (shadowMapToDisplay < 0) shadowMapToDisplay = 0;
-            if (shadowMapToDisplay >= spotLightInfos.size()) shadowMapToDisplay = spotLightInfos.size()-1;
-            if (shadowMapToDisplay < 0) {
-                Program program = clearProgramRef.get().getGLResource(gl);
-                program.use();
-                renderFulScreenQuadToTextureRectBuffer(gl, program, width, height, screenBuffer, true, true);
-                program.unuse();
-            } else {
-                Program program = displayShadowMapProgramRef.get().getGLResource(gl);
-                program.use();
-                ShadowingSpotLightInfo info = spotLightInfos.get(shadowMapToDisplay);
-                program.setUniform("minZ", shadowMapMinZ);
-                program.setUniform("maxZ", shadowMapMaxZ);
-                useTextureRect(gl, program, "shadowMap", info.shadowBuffer.colorBuffers[0].getReadBuffer(), 0);
-                renderFulScreenQuadToTextureRectBuffer(gl, program,
-                        info.light.getShadowMapResolution(),
-                        info.light.getShadowMapResolution(),
-                        screenBuffer,
-                        true,
-                        true);
-                info.shadowBuffer.colorBuffers[0].getReadBuffer().unuse();
-                program.unuse();
-            }
-        } else if (displayMode == AMBIENT_OCCULSION_MAP) {
-            Program program = copyProgramRef.get().getGLResource(gl);
-            program.use();
-            useTextureRect(gl, program, "texture", ambientOcclusionBuffer.colorBuffers[0].getReadBuffer(), 0);
-            renderFulScreenQuadToTextureRectBuffer(gl, program, width, height, screenBuffer, true, true);
-            ambientOcclusionBuffer.colorBuffers[0].getReadBuffer().unuse();
-            program.unuse();
+        	gaussianBlurProgram.use();
+        	for (int i = 0; i < bloomLayers; i++)
+        	{
+        		gaussianBlurProgram.getUniform("size").set1Int(bloomFilterSizes[i]);
+        		gaussianBlurProgram.getUniform("stdev").set1Float(bloomFilterStdev[i]);
+        		
+        		gaussianBlurProgram.getUniform("axis").set1Int(0);
+	        	useTextureRect(gl, gaussianBlurProgram, "texture", bBuffer.colorBuffers[0].getReadBuffer(), 0);
+	        	renderFullScreenQuadToTextureRectBuffer(gl, gaussianBlurProgram,
+	        			bBuffer.colorBuffers[0].getWidth(), bBuffer.colorBuffers[0].getHeight(), bBuffer, true, true);
+	        	
+	        	gaussianBlurProgram.getUniform("axis").set1Int(1);
+	        	useTextureRect(gl, gaussianBlurProgram, "texture", bBuffer.colorBuffers[0].getReadBuffer(), 0);
+	            gl.glEnable(GL2.GL_BLEND);
+	            gl.glBlendFunc(GL2.GL_ONE, GL2.GL_ONE);
+	        	renderFullScreenQuadToTextureRectBuffer(gl, gaussianBlurProgram,
+	    				screenBuffer.colorBuffers[0].getWidth(), screenBuffer.colorBuffers[0].getHeight(), screenBuffer, false, false);
+	        	gl.glDisable(GL2.GL_BLEND);
+	        	bBuffer.swap();
+        	}
+        	gaussianBlurProgram.unuse();
+        	bBuffer.colorBuffers[0].getReadBuffer().unuse();
+        	screenBuffer.swap();
         }
 
         // Compute the SRGB color and write to screen.
-        {
-            Program program = srgbProgramRef.get().getGLResource(gl);
-            program.use();
-            useTextureRect(gl, program, "image", screenBuffer.colorBuffers[0].getReadBuffer(), 0);
-            drawFullScreenQuad(program, width, height);
-            screenBuffer.colorBuffers[0].getReadBuffer().unuse();
-            program.unuse();
-        }
+        program = srgbProgramRef.get().getGLResource(gl);
+        program.use();
+        useTextureRect(gl, program, "image", screenBuffer.colorBuffers[0].getReadBuffer(), 0);
+        drawFullScreenQuad(program, width, height);
+        screenBuffer.colorBuffers[0].getReadBuffer().unuse();
+        program.unuse();          
     }
 
     private void useTextureRect(GL2 gl, Program program, String uniformName, TextureRect texture, int textureUnitId) {
@@ -1139,4 +1032,19 @@ public class DeferredRenderer {
         node.letTraverse(shadowMapRenderer);
         gl.glFlush();
     }
+    
+    private void renderFullScreenQuadToTextureRectBuffer(GL2 gl, Program program, int width, int height,
+            TextureRectBufferCollection buffers,
+            boolean clear, boolean swap) {
+		fbo.bind();
+		buffers.attachTo(fbo);
+		fbo.drawTo(0, 1);
+		drawFullScreenQuad(program, width, height, clear);
+		gl.glFlush();
+		fbo.drawToNone();
+		fbo.detachAll();
+		fbo.unbind();
+		if (swap)
+			buffers.swap();
+	}
 }
