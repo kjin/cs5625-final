@@ -88,4 +88,19 @@ public class FancyObject {
 		}
 		node.setScale(visible ? 1.0f : 0.001f);
 	}
+	
+	public boolean collidesWith(FancyObject other)
+	{
+		if (this.visible && other.visible && this.team != other.team)
+		{
+			float x = this.position.x - other.position.x;
+			float y = this.position.y - other.position.y;
+			float z = this.position.z - other.position.z;
+			if (x * x + y * y + z * z < this.collisionRadius + other.collisionRadius)
+			{
+				return true;
+			}
+		}
+		return false;
+	}
 }
