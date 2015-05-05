@@ -19,6 +19,7 @@ import cs5625.gfx.material.XToonMaterial;
 import cs5625.gfx.mesh.MeshPart;
 import cs5625.gfx.mesh.TriMesh;
 import cs5625.gfx.mesh.converter.WavefrontObjToTriMeshConverter;
+import cs5625.gfx.objcache.Holder;
 import cs5625.gfx.objcache.ObjectCacheKey;
 import cs5625.gfx.objcache.Reference;
 import cs5625.gfx.objcache.Value;
@@ -65,9 +66,12 @@ public class FancyObject {
         textureName = FilenameUtils.separatorsToUnix(new File(textureName).getAbsolutePath());
         String key = ObjectCacheKey.makeKey(FileTexture2DData.class, textureName);
         material.setXToonTexture(new Reference<Texture2DData>(key));
-        
-		MeshPart fancyPart = meshes.get(0).getPart(0);		
-		fancyPart.material = new Value<Material>(material);*/
+        */
+		
+		if(this.hasSpecialMaterial()) {
+			MeshPart fancyPart = meshes.get(0).getPart(0);		
+			fancyPart.material = this.getSpecialMaterial();
+		}
 		
 		node = new SceneTreeNode();
 		node.setData(new Value<NamedObject>(fancyMesh));
@@ -82,6 +86,16 @@ public class FancyObject {
 		velocity = new Vector3f(0,0,0);
 		position = node.getPosition();
 		visible = true;
+	}
+	
+	protected boolean hasSpecialMaterial()
+	{
+		return false;		
+	}
+	
+	protected Holder<Material> getSpecialMaterial()
+	{
+		return null;
 	}
 	
 	public void update()

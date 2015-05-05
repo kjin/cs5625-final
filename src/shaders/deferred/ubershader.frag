@@ -272,7 +272,7 @@ void main() {
 		gl_FragColor.xyz += getShadowFactor(position) * color;
 		
 		/* outline option: (doesn't look good)
-		if(length(dz) > 2.0)
+		if(length(dz) > 1.8)
 			gl_FragColor.xyz = vec3(0,0,0);
 		*/
 		
