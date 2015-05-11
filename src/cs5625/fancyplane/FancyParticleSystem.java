@@ -7,6 +7,14 @@ import java.util.LinkedList;
 import javax.vecmath.Point3f;
 import javax.vecmath.Vector3f;
 
+import cs5625.gfx.gldata.IndexData;
+import cs5625.gfx.gldata.SmokeParticleVertexData;
+import cs5625.gfx.gldata.SmokeParticleVertexData.Builder;
+import cs5625.gfx.gldata.VertexData;
+import cs5625.gfx.json.NamedObject;
+import cs5625.gfx.mesh.TriMesh;
+import cs5625.gfx.mesh.UnstructuredMesh;
+import cs5625.gfx.objcache.Value;
 import cs5625.gfx.scenetree.SceneTreeNode;
 
 public class FancyParticleSystem
@@ -29,6 +37,32 @@ public class FancyParticleSystem
 		{
 			inactiveParticles.add(new FancyParticle(node));
 		}
+		
+		// Init vertex data
+		SmokeParticleVertexData vertexData = new SmokeParticleVertexData();
+		vertexData.startBuild().setNumParticles(NUM_PARTICLES).endBuild();
+		
+		// Init index data
+		IndexData indexData = new IndexData();
+		IndexData.Builder builder = indexData.startBuild();
+		for (int i = 0; i < NUM_PARTICLES; i++)
+		{
+			builder.add(4 * i + 0);
+			builder.add(4 * i + 1);
+			builder.add(4 * i + 2);
+			builder.add(4 * i + 2);
+			builder.add(4 * i + 1);
+			builder.add(4 * i + 3);
+		}
+		builder.endBuild();
+		
+		UnstructuredMesh fancyMesh = new UnstructuredMesh();
+		fancyMesh.setVertexData(new Value<VertexData>(vertexData));
+		fancyMesh.setIndexData(new Value<IndexData>(indexData));
+		
+		node = new SceneTreeNode();
+		node.setData(new Value<NamedObject>(fancyMesh));
+		node.setScale(0.0001f); // since particle is invisible for now
 	}
 	
 	public void update()

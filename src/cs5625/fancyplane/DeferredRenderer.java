@@ -978,9 +978,13 @@ public class DeferredRenderer {
                 material.getExponentTexture() != null;
         if (useTexture && !checkVertexAttribute(vertexData, "vert_texCoord", material)) return;
 
-        Program program = getProgram(getVertexShaderFileName(vertexData), "src/shaders/deferred/smokeparticle.frag");
+        Program program = getProgram("src/shaders/deferred/smokeparticle.vert", "src/shaders/deferred/smokeparticle.frag");
         program.use();
-        bindVertexAttributes(program, mesh);
+        Vbo vertexBuffer = vertexData.getGLResource(gl);
+        vertexBuffer.bind();
+        bindAndEnableAttribute(program, vertexData, "vert_particle_index");
+        bindAndEnableAttribute(program, vertexData, "vert_particle_corner");
+        vertexBuffer.unbind();
         int texUnitStart = setupVertexShaderUniforms(program, mesh);
 
         // Set uniforms.
@@ -1001,7 +1005,8 @@ public class DeferredRenderer {
         unuseTexture(program, material.getExponentTexture());
 
         tearDownVertexShaderUniforms(program, mesh);
-        disableVertexAttributes(program, mesh);
+        disableAttribute(program, "vert_particle_index");
+        disableAttribute(program, "vert_particle_corner");
         program.unuse();
     }
 
