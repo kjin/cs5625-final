@@ -326,7 +326,7 @@ public class DeferredRenderer {
         if (edgeEnabled) {
             float threshold = 0.2f;
             float contrast = 10f;
-            int offset = 1;   
+            int offset = 1;
         	
         	Program sobelEdgeProgram = sobelEdgeProgramRef.get().getGLResource(gl);
         	sobelEdgeProgram.use();

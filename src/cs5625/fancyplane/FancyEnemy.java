@@ -16,22 +16,22 @@ import cs5625.gfx.scenetree.SceneTreeNode;
 
 public class FancyEnemy extends FancyShip
 {	
-	int fireTime;
+	int FIRE_RATE = 100;
 	int time;
 	
 	public FancyEnemy(SceneTreeNode parentNode, FancyBulletManager bulletManager)
 	{
 		super(parentNode, "fancy-enemy", FancyTeam.Enemy, bulletManager);
-		fireTime = 0;
 		collisionRadius = 1;
-		time = 0;
+		time = (int)(FIRE_RATE * Math.random());
 	}
 	
 	public void initialize()
 	{
 		health = 5;
 		position.x = 30;
-		position.y = position.z = 0;
+		position.y = (float)(2.0 * Math.random() - 1.0) * 5;
+		position.z = 0;
 	}
 	
 	protected boolean hasSpecialMaterial()
@@ -62,6 +62,11 @@ public class FancyEnemy extends FancyShip
 				health = 0;
 			}
 			time++;
+			if (time == FIRE_RATE)
+			{
+				bulletManager.fireBullet(this);
+				time = 0;
+			}
 		}
 		super.update();
 	}

@@ -38,20 +38,28 @@ public class FancyBulletManager
 	{
 		if (bullets[currentIndex].getHealth() <= 0)
 		{
+			Vector3f velocity = bullets[currentIndex].getVelocity();
 			if (plane.getTeam() == FancyTeam.Player)
 			{
-				Vector3f velocity = bullets[currentIndex].getVelocity();
 				velocity.x = 1.0f;
-				bullets[currentIndex].setTeam(FancyTeam.Player);
-				bullets[currentIndex].setPosition(plane.getPosition());
-				bullets[currentIndex].setVelocity(velocity);
-				bullets[currentIndex].setLifetime(BULLET_LIFETIME);
-				bullets[currentIndex].setHealth(1);
-				currentIndex++;
-				if (currentIndex == bullets.length)
-				{
-					currentIndex = 0;
-				}
+			}
+			else if (plane.getTeam() == FancyTeam.Enemy)
+			{
+				velocity.x = -1.0f;
+			}
+			else
+			{
+				return;
+			}
+			bullets[currentIndex].setTeam(plane.getTeam());
+			bullets[currentIndex].setPosition(plane.getPosition());
+			bullets[currentIndex].setVelocity(velocity);
+			bullets[currentIndex].setLifetime(BULLET_LIFETIME);
+			bullets[currentIndex].setHealth(1);
+			currentIndex++;
+			if (currentIndex == bullets.length)
+			{
+				currentIndex = 0;
 			}
 		}
 	}

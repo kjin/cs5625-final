@@ -79,7 +79,7 @@ public class FancyGameController {
 			{
 				if (enemies[i].health > 0 && fancyPlayer.collidesWith(enemies[i]))
 				{
-					doCollisionAftermath(fancyPlayer, enemies[i], true, true);
+					doCollisionAftermath(fancyPlayer, enemies[i], 20, 20);
 				}
 			}
 		}
@@ -90,7 +90,7 @@ public class FancyGameController {
 			{
 				if (fancyPlayer.health > 0 && fancyPlayer.collidesWith(bullets[i]))
 				{
-					doCollisionAftermath(fancyPlayer, bullets[i], true, false);
+					doCollisionAftermath(fancyPlayer, bullets[i], 20, 1);
 				}
 				if (bullets[i].health > 0)
 				{
@@ -98,7 +98,7 @@ public class FancyGameController {
 					{
 						if (enemies[j].health > 0 && enemies[j].collidesWith(bullets[i]))
 						{
-							doCollisionAftermath(enemies[j], bullets[i], true, false);
+							doCollisionAftermath(enemies[j], bullets[i], 20, 1);
 						}
 						if (bullets[i].health <= 0)
 						{
@@ -112,25 +112,25 @@ public class FancyGameController {
 	
 	Vector3f temp = new Vector3f(); // for below
 	
-	private void doCollisionAftermath(FancyObject o1, FancyObject o2, boolean o1MakesParticles, boolean o2MakesParticles)
+	private void doCollisionAftermath(FancyObject o1, FancyObject o2, int o1Particles, int o2Particles)
 	{
 		o1.setHealth(o1.getHealth() - 1);
 		o2.setHealth(o2.getHealth() - 1);
-		if (o1MakesParticles && o1.getHealth() == 0)
+		if (o1Particles > 0 && o1.getHealth() == 0)
 		{
 			temp.set(o2.getVelocity());
 			temp.setY(temp.y - 1);
 			temp.normalize();
 			temp.scale(0.05f);
-			fancyParticleSystem.releaseParticles(20, o1.getPosition(), temp, 0.5f);
+			fancyParticleSystem.releaseParticles(o1Particles, o1.getPosition(), temp, 0.5f);
 		}
-		if (o2MakesParticles && o2.getHealth() == 0)
+		if (o2Particles > 0 && o2.getHealth() == 0)
 		{
 			temp.set(o1.getVelocity());
 			temp.setY(temp.y - 1);
 			temp.normalize();
 			temp.scale(0.05f);
-			fancyParticleSystem.releaseParticles(20, o2.getPosition(), temp, 0.5f);
+			fancyParticleSystem.releaseParticles(o2Particles, o2.getPosition(), temp, 0.5f);
 		}
 	}
 	
