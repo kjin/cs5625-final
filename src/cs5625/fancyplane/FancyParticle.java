@@ -24,28 +24,13 @@ public class FancyParticle
 	public Point3f position;
 	public Vector3f velocity;
 	public float lifespan;
+	public int id;
 	
-	public FancyParticle(SceneTreeNode parentNode)
+	public FancyParticle(int id)
 	{
 		position = new Point3f();
 		velocity = new Vector3f();
 		lifespan = 0;
-		
-		/*ArrayList<TriMesh> meshes = new ArrayList<TriMesh>();
-		try {
-			meshes.addAll(WavefrontObjToTriMeshConverter.load("data/models/fancy-unitcube.obj", false, true));
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		TriMesh fancyMesh = meshes.get(0);
-		//SmokeParticleMaterial mat = new SmokeParticleMaterial();
-		//mat.setDiffuseColor(new Color4f(0.2f + (float)Math.random() / 3.0f, 0.2f, 0.2f, 0.1f));
-		//fancyMesh.getPart(0).material = new Value<Material>(mat);
-		
-		node = new SceneTreeNode();
-		node.setData(new Value<NamedObject>(fancyMesh));
-		node.setScale(0.0001f); // since particle is invisible for now
-		parentNode.addChild(node);*/
 	}
 	
 	public void update()
@@ -54,12 +39,9 @@ public class FancyParticle
 		{
 			velocity.setY(velocity.y + 0.001f);
 			position.add(velocity);
-			//node.setPosition(position);
-			//node.setScale(0.1f);
 			lifespan--;
 			if (lifespan == 0)
 			{
-				//node.setScale(0.0001f);
 			}
 		}
 	}

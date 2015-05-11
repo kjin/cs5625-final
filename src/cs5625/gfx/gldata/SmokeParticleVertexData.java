@@ -20,9 +20,9 @@ import java.util.HashMap;
  */
 public class SmokeParticleVertexData extends VertexData {
     public static final AttributeSpec PARTICLE_INDEX = new AttributeSpec("particle_index", 1,
-            GL2.GL_INT, false, 4 * 2, 0);
+            GL2.GL_FLOAT, false, 4 * 2, 0);
     public static final AttributeSpec PARTICLE_CORNER = new AttributeSpec("particle_color", 1,
-            GL2.GL_INT, false, 4 * 2, 4);
+            GL2.GL_FLOAT, false, 4 * 2, 4);
     private static final HashMap<String, AttributeSpec> vertexAttributes = new HashMap<String, AttributeSpec>();
 
     static {
@@ -91,20 +91,20 @@ public class SmokeParticleVertexData extends VertexData {
         return getNumBytesPerVertex() / 4;
     }
 
-    public int getParticleNumber(int index) {
-        return BufferUtil.getLittleEndianInt(buffer, getNumDWordsPerVertex() * index + 0);
+    public float getParticleNumber(int index) {
+        return BufferUtil.getLittleEndianFloat(buffer, getNumDWordsPerVertex() * index + 0);
     }
 
-    public int getParticleCorner(int index) {
-    	return BufferUtil.getLittleEndianInt(buffer, getNumDWordsPerVertex() * index + 1);
+    public float getParticleCorner(int index) {
+    	return BufferUtil.getLittleEndianFloat(buffer, getNumDWordsPerVertex() * index + 1);
     }
 
-    private void setParticleNumber(int index, int value) {
-    	BufferUtil.setLittleEndianInt(buffer, getNumDWordsPerVertex() * index + 0, value);
+    private void setParticleNumber(int index, float value) {
+    	BufferUtil.setLittleEndianFloat(buffer, getNumDWordsPerVertex() * index + 0, value);
     }
 
-    private void setParticleCorner(int index, int value) {
-        BufferUtil.setLittleEndianInt(buffer, getNumDWordsPerVertex() * index + 1, value);
+    private void setParticleCorner(int index, float value) {
+        BufferUtil.setLittleEndianFloat(buffer, getNumDWordsPerVertex() * index + 1, value);
     }
 
 	@Override

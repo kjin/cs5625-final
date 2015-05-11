@@ -101,6 +101,10 @@ public class Uniform {
     public String getName() {
         return name;
     }
+    
+    public void set1FloatV(float[] x) {
+        this.gl.glUniform1fv(this.location, x.length, x, 0);
+    }
 
     public void set1Int(int x) {
         this.gl.glUniform1i(this.location, x);

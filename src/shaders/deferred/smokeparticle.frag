@@ -15,7 +15,6 @@ const int SMOKE_PARTICLE_MATERIAL_ID = 5;
 
 varying vec3 geom_position;
 varying vec2 geom_texCoord;
-varying vec3 geom_normal;
 
 uniform vec4 mat_diffuseColor;
 uniform bool mat_hasDiffuseTexture;
@@ -50,7 +49,7 @@ void main()
 	}
 	
 	// Encoding: (matID, normal[3], color[4], position[3], exponent, specular, 0)
-	gl_FragData[0] = vec4(float(SMOKE_PARTICLE_MATERIAL_ID), geom_normal);
+	gl_FragData[0] = vec4(float(SMOKE_PARTICLE_MATERIAL_ID), 0, 0, 1);
 	gl_FragData[1] = diffuse;
 	gl_FragData[2] = vec4(geom_position, exponent);
 	gl_FragData[3] = vec4(specular, 0.0);

@@ -61,7 +61,7 @@ void main()
 	} else {
 		//second coordinate is based on distance from view
 		float z = p.z;
-		texCoord.y = 1-log(z/zmin)/log(zmax/zmin);
+		texCoord.y = 1-log(float(z/zmin))/log(float(zmax/zmin));
 	}
 	
 	//now we can get the tex coordinate

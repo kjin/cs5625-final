@@ -20,6 +20,7 @@ import cs5625.gfx.light.ShadowingSpotLight;
 import cs5625.gfx.material.*;
 import cs5625.gfx.mesh.Mesh;
 import cs5625.gfx.mesh.MeshPart;
+import cs5625.gfx.mesh.SmokeParticleMesh;
 import cs5625.gfx.objcache.Holder;
 import cs5625.gfx.objcache.ObjectCache;
 import cs5625.gfx.objcache.ObjectCacheKey;
@@ -971,12 +972,8 @@ public class DeferredRenderer {
         VertexData vertexData = mesh.getVertexData().get();
         IndexData indexData = mesh.getIndexData().get();
 
-        if (!checkVertexAttribute(vertexData, "vert_position", material)) return;
-        if (!checkVertexAttribute(vertexData, "vert_normal", material)) return;
-        boolean useTexture = material.getDiffuseTexture() != null ||
-                material.getSpecularTexture() != null ||
-                material.getExponentTexture() != null;
-        if (useTexture && !checkVertexAttribute(vertexData, "vert_texCoord", material)) return;
+        if (!checkVertexAttribute(vertexData, "vert_particle_index", material)) return;
+        if (!checkVertexAttribute(vertexData, "vert_particle_corner", material)) return;
 
         Program program = getProgram("src/shaders/deferred/smokeparticle.vert", "src/shaders/deferred/smokeparticle.frag");
         program.use();
@@ -989,6 +986,8 @@ public class DeferredRenderer {
 
         // Set uniforms.
         setMatrixUniforms(program);
+        // Set particle positions
+        program.setUniform("particleLocations", ((SmokeParticleMesh)mesh).particlePositions);
         program.setUniform("mat_diffuseColor", material.getDiffuseColor())
             .setUniform("mat_specularColor", material.getSpecularColor())
             .setUniform("mat_exponent", material.getExponent());

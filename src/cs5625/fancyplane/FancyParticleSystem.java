@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
 
+import javax.media.opengl.GL2;
 import javax.vecmath.Point3f;
 import javax.vecmath.Vector3f;
 
@@ -12,6 +13,10 @@ import cs5625.gfx.gldata.SmokeParticleVertexData;
 import cs5625.gfx.gldata.SmokeParticleVertexData.Builder;
 import cs5625.gfx.gldata.VertexData;
 import cs5625.gfx.json.NamedObject;
+import cs5625.gfx.material.Material;
+import cs5625.gfx.material.SmokeParticleMaterial;
+import cs5625.gfx.mesh.MeshPart;
+import cs5625.gfx.mesh.SmokeParticleMesh;
 import cs5625.gfx.mesh.TriMesh;
 import cs5625.gfx.mesh.UnstructuredMesh;
 import cs5625.gfx.objcache.Value;
@@ -26,6 +31,8 @@ public class FancyParticleSystem
 	LinkedList<FancyParticle> activeParticles;
 	ArrayList<FancyParticle> inactiveParticles;
 	
+	SmokeParticleMesh fancyMesh;
+	
 	public FancyParticleSystem(SceneTreeNode parentNode)
 	{
 		node = new SceneTreeNode();
@@ -35,7 +42,7 @@ public class FancyParticleSystem
 		inactiveParticles = new ArrayList<FancyParticle>();
 		for (int i = 0; i < NUM_PARTICLES; i++)
 		{
-			inactiveParticles.add(new FancyParticle(node));
+			inactiveParticles.add(new FancyParticle(i));
 		}
 		
 		// Init vertex data
@@ -56,13 +63,16 @@ public class FancyParticleSystem
 		}
 		builder.endBuild();
 		
-		UnstructuredMesh fancyMesh = new UnstructuredMesh();
+		fancyMesh = new SmokeParticleMesh(NUM_PARTICLES);
 		fancyMesh.setVertexData(new Value<VertexData>(vertexData));
 		fancyMesh.setIndexData(new Value<IndexData>(indexData));
+				
+		MeshPart fancyMeshPart = new MeshPart(GL2.GL_TRIANGLES, 0, 4 * NUM_PARTICLES, new Value<Material>(new SmokeParticleMaterial()));
+		fancyMesh.addPart(fancyMeshPart);
 		
 		node = new SceneTreeNode();
 		node.setData(new Value<NamedObject>(fancyMesh));
-		node.setScale(0.0001f); // since particle is invisible for now
+		parentNode.addChild(node);
 	}
 	
 	public void update()
@@ -72,6 +82,7 @@ public class FancyParticleSystem
 		{
 			FancyParticle particle = itr.next();
 			particle.update();
+			fancyMesh.setParticlePosition(particle.id, particle.position);
 			if (particle.lifespan <= 0)
 			{
 				itr.remove();
