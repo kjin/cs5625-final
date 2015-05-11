@@ -11,7 +11,7 @@ import javax.vecmath.Vector3f;
 
 import cs5625.gfx.json.NamedObject;
 import cs5625.gfx.material.Material;
-import cs5625.gfx.material.SingleColorMaterial;
+import cs5625.gfx.material.SmokeParticleMaterial;
 import cs5625.gfx.mesh.TriMesh;
 import cs5625.gfx.mesh.converter.WavefrontObjToTriMeshConverter;
 import cs5625.gfx.objcache.Value;
@@ -38,8 +38,8 @@ public class FancyParticle
 			e.printStackTrace();
 		}
 		TriMesh fancyMesh = meshes.get(0);
-		SingleColorMaterial mat = new SingleColorMaterial();
-		mat.setColor(new Color4f(0.2f + (float)Math.random() / 3.0f, 0.2f, 0.2f, 1.0f));
+		SmokeParticleMaterial mat = new SmokeParticleMaterial();
+		mat.setDiffuseColor(new Color4f(0.2f + (float)Math.random() / 3.0f, 0.2f, 0.2f, 0.1f));
 		fancyMesh.getPart(0).material = new Value<Material>(mat);
 		
 		node = new SceneTreeNode();
