@@ -69,110 +69,21 @@ vec2 rotate(vec2 point, float angle)
 }
 
 float getShadowFactor(vec3 position) {	
-	return 1.0;
-
-/*
-	if (spotLight_shadowMode == NO_SHADOWS) {
-		return 1.0;		
-	} else if (spotLight_shadowMode == SIMPLE_SHADOW_MAP) {
-		vec4 p = vec4(position, 1.0);
-		p = spotLight_viewMatrix * sys_inverseViewMatrix * p;
-		p = spotLight_projectionMatrix * p;
-		p = p / p.w;
-		
-		vec2 texCoord = vec2(((p.x + 1)/2)*spotLight_shadowMapWidth, ((p.y + 1)/2)*spotLight_shadowMapHeight);
-		vec4 q = texture2DRect(spotLight_shadowMap, texCoord);
-		float bias = spotLight_shadowMapBiasScale*max(abs(q.x),abs(q.y)) + spotLight_shadowMapConstantBias;
-		
-		if(p.z > q.z / q.w + bias) {
-			return 0.0;
-		} else {
-			return 1.0;
-		}
-			
-	} else if (spotLight_shadowMode == PERCENTAGE_CLOSER_FILTERING || spotLight_shadowMode == PERCENTAGE_CLOSER_SOFT_SHADOW) {		
-		float poissonSamples[80] = float[80](0.0340212, 0.674301, 0.0858099, 0.496943, 
-		0.0694185, 0.860058, 0.0406619, 0.218842, 0.0735586, 0.0448695, 0.15123, 0.339518, 
-		0.271311, 0.469369, 0.200576, 0.774924, 0.204111, 0.154617, 0.20539, 0.948375, 
-		0.185354, 0.612016, 0.321298, 0.0390153, 0.304494, 0.28675, 0.326761, 0.667022, 
-		0.426756, 0.385165, 0.43075, 0.539734, 0.35753, 0.855105, 0.472576, 0.713726, 
-		0.599869, 0.436843, 0.531687, 0.274545, 0.413117, 0.167727, 0.53426, 0.849135, 
-		0.472694, 0.998865, 0.641721, 0.957124, 0.579323, 0.597005, 0.589336, 0.120575, 
-		0.745134, 0.148836, 0.688499, 0.293683, 0.785452, 0.00750335, 0.65954, 0.738719, 
-		0.916359, 0.112317, 0.829323, 0.681274, 0.773597, 0.848216, 0.731165, 0.561037,
-		0.795832, 0.41844, 0.931794, 0.949323, 0.863814, 0.265922, 0.97478, 0.38034, 
-		0.928406, 0.792087, 0.917633, 0.543024);
-		// Get random rotation:
-		float angle = 2*PI*fract(sin(dot(geom_texCoord,vec2(12.9898,78.233))) * 43758.5453);
-		
-		vec4 p = vec4(position, 1.0);
-		p = spotLight_viewMatrix * sys_inverseViewMatrix * p;
-		float d = -p.z / p.w;
-		p = spotLight_projectionMatrix * p;
-		vec4 p_orig = p;
-		p = p / p.w;
-		
-		vec2 baseTexCoord = vec2(((p.x + 1)/2)*spotLight_shadowMapWidth, ((p.y + 1)/2)*spotLight_shadowMapHeight);
-		
-		if (spotLight_shadowMode == PERCENTAGE_CLOSER_FILTERING)
-		{
-			float numPoissonSamples = min(float(spotLight_pcfKernelSampleCount), 40.0);
-			float occludedSamples = 0.0;
-			for (int i = 0; i < numPoissonSamples; i++)
-			{
-				vec2 texCoord = baseTexCoord + spotLight_pcfWindowWidth * rotate(vec2(poissonSamples[2 * i] - 0.5, poissonSamples[2 * i + 1] - 0.5), angle);
-				vec4 q = texture2DRect(spotLight_shadowMap, texCoord);
-				float bias = spotLight_shadowMapBiasScale*max(abs(q.x),abs(q.y)) + spotLight_shadowMapConstantBias;
-				if(p.z <= q.z / q.w + bias) {
-					occludedSamples += 1.0;
-				}
-			}
-			return occludedSamples / numPoissonSamples;
-		}
-		else //spotLight_shadowMode == PERCENTAGE_CLOSER_SOFT_SHADOW
-		{
-			// s is defined in task 5.
-			float nearPlaneSize = 2.0 * spotLight_near * tan(spotLight_fov / 2.0);
-			vec2 s = ((d - spotLight_near) / d * spotLight_lightWidth) / nearPlaneSize * vec2(spotLight_shadowMapWidth, spotLight_shadowMapHeight);
-			
-			// evaluate poisson points in s x s window.
-			float numPoissonSamples = min(float(spotLight_pcssBlockerKernelSampleCount), 40.0);
-			float occludedSamples = 0.0;
-			float averageDepth = 0.0;
-			for (int i = 0; i < numPoissonSamples; i++)
-			{
-				vec2 texCoord = baseTexCoord + s * rotate(vec2(poissonSamples[2 * i] - 0.5, poissonSamples[2 * i + 1] - 0.5), angle);
-				vec4 q = texture2DRect(spotLight_shadowMap, texCoord);
-				if(p.z > q.z / q.w) {
-					occludedSamples += 1.0;
-					averageDepth += q.w;
-				}
-			}
-			averageDepth /= occludedSamples;
-			vec2 penumbraSize = vec2(0,0);
-			if (occludedSamples > 0)
-			{
-				penumbraSize = (p_orig.w - averageDepth) / averageDepth * s;
-			}
-			
-			// re-evaluate poisson points, this time in penumbra.
-			numPoissonSamples = min(float(spotLight_pcssPenumbraKernelSampleCount), 40.0);
-			occludedSamples = 0.0;
-			for (int i = 0; i < numPoissonSamples; i++)
-			{
-				vec2 texCoord = baseTexCoord + penumbraSize * rotate(vec2(poissonSamples[2 * i] - 0.5, poissonSamples[2 * i + 1] - 0.5), angle);
-				vec4 q = texture2DRect(spotLight_shadowMap, texCoord);
-				float bias = spotLight_shadowMapBiasScale*max(abs(q.x),abs(q.y)) + spotLight_shadowMapConstantBias;
-				if(p.z <= q.z / q.w + bias) {
-					occludedSamples += 1.0;
-				}
-			}
-			return occludedSamples / numPoissonSamples;
-		}
+	vec4 p = vec4(position, 1.0);
+	p = spotLight_viewMatrix * sys_inverseViewMatrix * p;
+	p = spotLight_projectionMatrix * p;
+	p = p / p.w;
+	
+	// using just simple shadow mapping
+	vec2 texCoord = vec2(((p.x + 1)/2)*spotLight_shadowMapWidth, ((p.y + 1)/2)*spotLight_shadowMapHeight);
+	vec4 q = texture2DRect(spotLight_shadowMap, texCoord);
+	float bias = spotLight_shadowMapBiasScale*max(abs(q.x),abs(q.y)) + spotLight_shadowMapConstantBias;
+	
+	if(p.z > q.z / q.w + bias) {
+		return 0.0;
 	} else {
 		return 1.0;
 	}
-	*/
 }
 
 void main() {		
@@ -216,15 +127,13 @@ void main() {
 			}
 		
 		} else {
-		
-			float factor = getShadowFactor(position);
 			
 			vec3 l = spotLight_eyePosition - position;
 			float d = sqrt(dot(l, l));
 			l = normalize(l);
 			float attenuation = dot(spotLight_attenuation, vec3(1, d, d*d));
 			float dotProd = max(dot(normal,l), 0);
-			gl_FragColor.xyz += factor * color * dotProd * spotLight_color / attenuation;
+			gl_FragColor.xyz += color * dotProd * spotLight_color / attenuation;
 			
 		}
 	}
@@ -253,7 +162,6 @@ void main() {
 				gl_FragColor.xyz += (color * nlDotProd + specular * pow(nhDotProd, exponent)) * pointLight_color[i] / attenuation;
 			}			
 		} else {
-			float factor = getShadowFactor(position);
 			
 			vec3 l = spotLight_eyePosition - position;
 			float d = sqrt(dot(l, l));
@@ -267,14 +175,14 @@ void main() {
 			vec3 h = normalize(l + v);
 			float nhDotProd = max(dot(normal, h), 0);
 			
-			gl_FragColor.xyz += factor * (color * nlDotProd + specular * pow(nhDotProd, exponent)) * spotLight_color / attenuation;				
+			gl_FragColor.xyz += (color * nlDotProd + specular * pow(nhDotProd, exponent)) * spotLight_color / attenuation;				
 		}
 	}
 	/*XToon************************************/
 	else if (materialID == XTOON_MATERIAL_ID) {
 		vec2 dz = materialParams4.xy;
 		
-		gl_FragColor.xyz += getShadowFactor(position) * color;
+		gl_FragColor.xyz += color;
 		
 		/* outline option: (doesn't look good)
 		if(length(dz) > 1.8)
