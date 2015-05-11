@@ -50,7 +50,7 @@ void main()
 	vec3 particleLocation = vec3(particleLocations[int(3 * vert_particle_index)],
 								 particleLocations[int(3 * vert_particle_index + 1)],
 							 	 particleLocations[int(3 * vert_particle_index + 2)]);
-	vec4 position = sys_modelViewMatrix * vec4(1 * vertexOffset,1);
+	vec4 position = sys_modelViewMatrix * vec4(particleLocation + 0.5 * vertexOffset,1);
 	geom_position = position.xyz;
 	gl_Position = sys_projectionMatrix * position;
 }

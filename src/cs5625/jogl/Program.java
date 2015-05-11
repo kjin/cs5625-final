@@ -195,9 +195,10 @@ public class Program implements GLResource {
 					newUniform.location = uniform.location + i;
 					newUniform.isRowMajor = uniform.isRowMajor;
 					newUniforms.add(newUniform);
-					if (gl.glGetUniformLocation(this.getId(), newUniform.name) != newUniform.location) {
-						throw new RuntimeException("uniform '" + newUniform.name + "' location not matching the OpenGL assigned location");
-					}
+					//int glUniformLocation = gl.glGetUniformLocation(this.getId(), newUniform.name);
+					//if (glUniformLocation != newUniform.location) {
+					//	throw new RuntimeException("uniform '" + newUniform.name + "' location not matching the OpenGL assigned location");
+					//}
 				}
                 if (start == 0)
                     toRemove.add(uniform);

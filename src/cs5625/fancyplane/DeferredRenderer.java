@@ -772,6 +772,8 @@ public class DeferredRenderer {
             bindPosNorTexTanAttributes(program, vertexData);
         } else if (vertexData instanceof SkeletalMeshVertexData) {
             bindSkeletalMeshAttributes(program, vertexData);
+        } else if (vertexData instanceof SmokeParticleVertexData) {
+            bindSmokeParticleAttributes(program, vertexData);
         } else {
             throw new RuntimeException("unsupported vertex data type: " + vertexData.getClass().getName());
         }
@@ -793,6 +795,8 @@ public class DeferredRenderer {
             disablePosNorTexTanAttributes(program);
         } else if (vertexData instanceof SkeletalMeshVertexData) {
             disableSkeletalMeshAttributes(program);
+        } else if (vertexData instanceof SmokeParticleVertexData) {
+            disableSmokeParticleAttributes(program);
         } else {
             throw new RuntimeException("unsupported vertex data type: " + vertexData.getClass().getName());
         }
@@ -854,6 +858,19 @@ public class DeferredRenderer {
         disableAttribute(program, "vert_position");
         disableAttribute(program, "vert_color");
     }
+    
+    private void bindSmokeParticleAttributes(Program program, VertexData vertexData) {
+        Vbo vertexBuffer = vertexData.getGLResource(gl);
+        vertexBuffer.bind();
+        bindAndEnableAttribute(program, vertexData, "vert_particle_index");
+        bindAndEnableAttribute(program, vertexData, "vert_particle_corner");
+        vertexBuffer.unbind();
+    }
+
+    private void disableSmokeParticleAttributes(Program program) {
+        disableAttribute(program, "vert_particle_index");
+        disableAttribute(program, "vert_particle_corner");
+    }
 
     private void renderMeshPartToColorBuffer(Mesh mesh, MeshPart meshPart) {
         Material material = meshPart.material.get();
@@ -879,6 +896,8 @@ public class DeferredRenderer {
             return "src/shaders/deferred/pos_tex_nor_tan.vert";
         } else if (vertexData instanceof SkeletalMeshVertexData) {
             return "src/shaders/deferred/skeletal_mesh.vert";
+        }  else if (vertexData instanceof SmokeParticleVertexData) {
+            return "src/shaders/deferred/smokeparticle.vert";
         } else {
             throw new RuntimeException("Unsupported vertex data type: " + vertexData.getClass().getName());
         }
@@ -1020,13 +1039,9 @@ public class DeferredRenderer {
         if (!checkVertexAttribute(vertexData, "vert_particle_index", material)) return;
         if (!checkVertexAttribute(vertexData, "vert_particle_corner", material)) return;
 
-        Program program = getProgram("src/shaders/deferred/smokeparticle.vert", "src/shaders/deferred/smokeparticle.frag");
+        Program program = getProgram(getVertexShaderFileName(vertexData), "src/shaders/deferred/smokeparticle.frag");
         program.use();
-        Vbo vertexBuffer = vertexData.getGLResource(gl);
-        vertexBuffer.bind();
-        bindAndEnableAttribute(program, vertexData, "vert_particle_index");
-        bindAndEnableAttribute(program, vertexData, "vert_particle_corner");
-        vertexBuffer.unbind();
+        bindVertexAttributes(program, mesh);
         int texUnitStart = setupVertexShaderUniforms(program, mesh);
 
         // Set uniforms.
@@ -1049,8 +1064,7 @@ public class DeferredRenderer {
         unuseTexture(program, material.getExponentTexture());
 
         tearDownVertexShaderUniforms(program, mesh);
-        disableAttribute(program, "vert_particle_index");
-        disableAttribute(program, "vert_particle_corner");
+        disableVertexAttributes(program, mesh);
         program.unuse();
     }
 
