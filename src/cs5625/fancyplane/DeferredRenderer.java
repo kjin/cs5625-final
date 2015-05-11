@@ -819,6 +819,8 @@ public class DeferredRenderer {
             renderMeshPart(mesh, meshPart, (BlinnPhongMaterial) material);
         } else if (material instanceof XToonMaterial) {
         	renderMeshPart(mesh, meshPart, (XToonMaterial) material);
+        } else if (material instanceof SmokeParticleMaterial) {
+        	renderMeshPart(mesh, meshPart, (SmokeParticleMaterial) material);
         } else {
             renderMeshPart(mesh, meshPart, whiteMaterial);
         }
@@ -965,7 +967,43 @@ public class DeferredRenderer {
         program.unuse();
     }
     
-    
+    private void renderMeshPart(Mesh mesh, MeshPart meshPart, SmokeParticleMaterial material) {
+        VertexData vertexData = mesh.getVertexData().get();
+        IndexData indexData = mesh.getIndexData().get();
+
+        if (!checkVertexAttribute(vertexData, "vert_position", material)) return;
+        if (!checkVertexAttribute(vertexData, "vert_normal", material)) return;
+        boolean useTexture = material.getDiffuseTexture() != null ||
+                material.getSpecularTexture() != null ||
+                material.getExponentTexture() != null;
+        if (useTexture && !checkVertexAttribute(vertexData, "vert_texCoord", material)) return;
+
+        Program program = getProgram(getVertexShaderFileName(vertexData), "src/shaders/deferred/smokeparticle.frag");
+        program.use();
+        bindVertexAttributes(program, mesh);
+        int texUnitStart = setupVertexShaderUniforms(program, mesh);
+
+        // Set uniforms.
+        setMatrixUniforms(program);
+        program.setUniform("mat_diffuseColor", material.getDiffuseColor())
+            .setUniform("mat_specularColor", material.getSpecularColor())
+            .setUniform("mat_exponent", material.getExponent());
+        useTexture(program, material.getDiffuseTexture(), "mat_hasDiffuseTexture", "mat_diffuseTexture", texUnitStart + 0);
+        useTexture(program, material.getSpecularTexture(), "mat_hasSpecularTexture", "mat_specularTexture", texUnitStart + 1);
+        useTexture(program, material.getExponentTexture(), "mat_hasExponentTexture", "mat_exponentTexture", texUnitStart + 2);
+
+        // Draw the mesh part.
+        drawElement(indexData, meshPart);
+
+        // Tear down the program.
+        unuseTexture(program, material.getDiffuseTexture());
+        unuseTexture(program, material.getSpecularTexture());
+        unuseTexture(program, material.getExponentTexture());
+
+        tearDownVertexShaderUniforms(program, mesh);
+        disableVertexAttributes(program, mesh);
+        program.unuse();
+    }
 
     class SmokeShadowMapRenderer implements SceneTreeTraverser {
         Matrix4f modelMatrix = new Matrix4f();
