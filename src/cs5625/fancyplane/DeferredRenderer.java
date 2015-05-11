@@ -79,7 +79,7 @@ public class DeferredRenderer {
      * Sub-renderers
      */
     ColorBufferRenderer colorBufferRenderer = new ColorBufferRenderer();
-    ShadowMapRenderer shadowMapRenderer = new ShadowMapRenderer();
+    SmokeShadowMapRenderer smokeShadowMapRenderer = new SmokeShadowMapRenderer();
     /**
      * Point light related fields
      */
@@ -967,7 +967,7 @@ public class DeferredRenderer {
     
     
 
-    class ShadowMapRenderer implements SceneTreeTraverser {
+    class SmokeShadowMapRenderer implements SceneTreeTraverser {
         Matrix4f modelMatrix = new Matrix4f();
         ArrayList<Matrix4f> modelMatrices = new ArrayList<Matrix4f>();
         int stackTop = 0;
@@ -975,7 +975,7 @@ public class DeferredRenderer {
         public int shadowMapWidth;
         public int shadowMapHeight;
 
-        public ShadowMapRenderer() {
+        public SmokeShadowMapRenderer() {
             modelMatrix.setIdentity();
         }
 
@@ -996,7 +996,7 @@ public class DeferredRenderer {
             Object data = node.getData().get();
             if (data instanceof Mesh) {
                 Mesh mesh = (Mesh) data;
-                renderMeshToShadowMap(mesh, modelMatrix, shadowMapWidth, shadowMapHeight);
+                renderMeshToSmokeShadowMap(mesh, modelMatrix, shadowMapWidth, shadowMapHeight);
             }
         }
 
@@ -1007,7 +1007,7 @@ public class DeferredRenderer {
         }
     }
 
-    private void renderMeshToShadowMap(Mesh mesh, Matrix4f modelMatrix, int shadowMapWidth, int shadowMapHeight) {
+    private void renderMeshToSmokeShadowMap(Mesh mesh, Matrix4f modelMatrix, int shadowMapWidth, int shadowMapHeight) {
         if (!mesh.castsShadow())
             return;
 
@@ -1019,11 +1019,11 @@ public class DeferredRenderer {
 
         for (int i = 0; i < mesh.getPartCount(); i++) {
             MeshPart meshPart = mesh.getPart(i);
-            renderMeshPartToShadowMap(mesh, meshPart, shadowMapWidth, shadowMapHeight);
+            renderMeshPartToSmokeShadowMap(mesh, meshPart, shadowMapWidth, shadowMapHeight);
         }
     }
 
-    private void renderMeshPartToShadowMap(Mesh mesh, MeshPart meshPart, int shadowMapWidth, int shadowMapHeight) {
+    private void renderMeshPartToSmokeShadowMap(Mesh mesh, MeshPart meshPart, int shadowMapWidth, int shadowMapHeight) {
         VertexData vertexData = mesh.getVertexData().get();
         IndexData indexData = mesh.getIndexData().get();
 
@@ -1046,14 +1046,14 @@ public class DeferredRenderer {
         program.unuse();
     }
 
-    private void renderSceneToShadowMap(GL2 gl, SceneTreeNode node, int width, int height) {
+    private void renderSceneToSmokeShadowMap(GL2 gl, SceneTreeNode node, int width, int height) {
         gl.glViewport(0, 0, width, height);
         gl.glClearColor(0, 0, 0, 0);
         gl.glClear(GL2.GL_COLOR_BUFFER_BIT | GL2.GL_DEPTH_BUFFER_BIT);
         gl.glEnable(GL2.GL_DEPTH_TEST);
-        shadowMapRenderer.shadowMapWidth = width;
-        shadowMapRenderer.shadowMapHeight = height;
-        node.letTraverse(shadowMapRenderer);
+        smokeShadowMapRenderer.shadowMapWidth = width;
+        smokeShadowMapRenderer.shadowMapHeight = height;
+        node.letTraverse(smokeShadowMapRenderer);
         gl.glFlush();
     }
     
