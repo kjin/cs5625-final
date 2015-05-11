@@ -19,8 +19,8 @@ void main() {
 	vec4 value = texture2DRect(shadowMap, geom_texCoord);
 	//vec4 value1 = texture2DRect(shadowMap, geom_texCoord + vec2(1,0));
 	//vec4 value2 = texture2DRect(shadowMap, geom_texCoord + vec2(0,1));
-	float theMinZ = minZ;
-	float theMaxZ = maxZ;
+	float theMinZ = 5;
+	float theMaxZ = 80;
 	if (minZ > maxZ) {
 		theMinZ = maxZ;
 		theMaxZ = minZ;

@@ -36,15 +36,15 @@ public class FancyGameController {
 		fancyPlayer = new FancyPlayer(fancyScene, fancyBulletManager);
 		fancyEnemyManager = new FancyEnemyManager(fancyScene, fancyBulletManager);
 		fancyParticleSystem = new FancyParticleSystem(fancyScene);
-    	
+		
 		// light stuff
     	ShadowingSpotLight spotLight = new ShadowingSpotLight();
-    	spotLight.setPosition(new Point3f(5, 25, 0));
+    	spotLight.setPosition(new Point3f(30,45,-10));
     	spotLight.setTarget(new Point3f(0,0,0));
     	spotLight.setColor(new Color3f(1.0f, 1.0f, 1.0f));
     	SceneTreeNode spotLightNode = new SceneTreeNode();
     	spotLightNode.setData(new Value<NamedObject>(spotLight));
-    	//fancyScene.addChild(spotLightNode);
+    	fancyScene.addChild(spotLightNode);
     	
     	// sun stuff
     	/* make the sun out of a doodad. */
