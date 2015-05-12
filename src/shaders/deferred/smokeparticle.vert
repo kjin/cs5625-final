@@ -20,6 +20,7 @@ const int CENTER = 4;
 
 uniform mat4 sys_modelViewMatrix;
 uniform mat4 sys_projectionMatrix;
+uniform mat4 sys_inverseViewMatrix;
 uniform vec3 particleLocations[200]; // should be FancyParticleSystem::NUM_PARTICLES
 
 varying vec3 geom_position;
@@ -27,30 +28,39 @@ varying vec2 geom_texCoord;
 
 void main()
 {
+	vec3 upVector = (sys_inverseViewMatrix * vec4(0,1,0,1)).xyz;
+	upVector = normalize(upVector);
+	
+	vec3 rightVector = (sys_inverseViewMatrix * vec4(1,0,0,1)).xyz;
+	rightVector = normalize(rightVector);
+	
+	vec3 depthVector = cross(rightVector,upVector);
+	rightVector = cross(upVector,depthVector);
+
 	vec3 vertexOffset;
 	if (vert_particle_corner == BOTTOM_LEFT_CORNER)
 	{
-		vertexOffset = vec3(-1, -1, 0);
+		vertexOffset = -upVector - rightVector;
 		geom_texCoord = vec2(0, 0);
 	}
 	else if (vert_particle_corner == BOTTOM_RIGHT_CORNER)
 	{
-		vertexOffset = vec3(1, -1, 0);
+		vertexOffset = -upVector + rightVector;
 		geom_texCoord = vec2(1, 0);
 	}
 	else if (vert_particle_corner == TOP_RIGHT_CORNER)
 	{
-		vertexOffset = vec3(1, 1, 0);
+		vertexOffset = upVector + rightVector;
 		geom_texCoord = vec2(1, 1);
 	}
 	else if (vert_particle_corner == TOP_LEFT_CORNER)
 	{
-		vertexOffset = vec3(-1, 1, 0);
+		vertexOffset = upVector - rightVector;
 		geom_texCoord = vec2(0, 1);
 	}
 	else if (vert_particle_corner == CENTER)
 	{
-		vertexOffset = vec3(0, 0, 1);
+		vertexOffset = vec3(0, 0, depthVector);
 		geom_texCoord = vec2(0.5, 0.5);
 	}
 	vec3 particleLocation = particleLocations[int(vert_particle_index)];
