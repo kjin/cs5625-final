@@ -14,8 +14,9 @@ attribute float vert_particle_corner;
 
 const int BOTTOM_LEFT_CORNER = 0;
 const int BOTTOM_RIGHT_CORNER = 1;
-const int TOP_LEFT_CORNER = 2;
-const int TOP_RIGHT_CORNER = 3;
+const int TOP_RIGHT_CORNER = 2;
+const int TOP_LEFT_CORNER = 3;
+const int CENTER = 4;
 
 uniform mat4 sys_modelViewMatrix;
 uniform mat4 sys_projectionMatrix;
@@ -37,15 +38,20 @@ void main()
 		vertexOffset = vec3(1, -1, 0);
 		geom_texCoord = vec2(1, 0);
 	}
+	else if (vert_particle_corner == TOP_RIGHT_CORNER)
+	{
+		vertexOffset = vec3(1, 1, 0);
+		geom_texCoord = vec2(1, 1);
+	}
 	else if (vert_particle_corner == TOP_LEFT_CORNER)
 	{
 		vertexOffset = vec3(-1, 1, 0);
 		geom_texCoord = vec2(0, 1);
 	}
-	else if (vert_particle_corner == TOP_RIGHT_CORNER)
+	else if (vert_particle_corner == CENTER)
 	{
-		vertexOffset = vec3(1, 1, 0);
-		geom_texCoord = vec2(1, 1);
+		vertexOffset = vec3(0, 0, 1);
+		geom_texCoord = vec2(0.5, 0.5);
 	}
 	vec3 particleLocation = particleLocations[int(vert_particle_index)];
 	vec4 position = sys_modelViewMatrix * vec4(particleLocation + 0.5 * vertexOffset,1);

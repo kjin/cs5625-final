@@ -47,16 +47,18 @@ public class SmokeParticleVertexData extends VertexData {
         }
 
         public SmokeParticleVertexData endBuild() {
-            data.allocate(4 * numParticles);
+            data.allocate(5 * numParticles);
             for (int i = 0; i < numParticles; i++) {
-                data.setParticleNumber(4 * i + 0, i + 1);
-                data.setParticleNumber(4 * i + 1, i + 1);
-                data.setParticleNumber(4 * i + 2, i + 1);
-                data.setParticleNumber(4 * i + 3, i + 1);
-                data.setParticleCorner(4 * i + 0, 0);
-                data.setParticleCorner(4 * i + 1, 1);
-                data.setParticleCorner(4 * i + 2, 2);
-                data.setParticleCorner(4 * i + 3, 3);
+                data.setParticleCorner(5 * i + 0, 0);
+                data.setParticleNumber(5 * i + 0, i + 1);
+                data.setParticleCorner(5 * i + 1, 1);
+                data.setParticleNumber(5 * i + 1, i + 1);
+                data.setParticleCorner(5 * i + 2, 2);
+                data.setParticleNumber(5 * i + 2, i + 1);
+                data.setParticleCorner(5 * i + 3, 3);
+                data.setParticleNumber(5 * i + 3, i + 1);
+                data.setParticleCorner(5 * i + 4, 4);
+                data.setParticleNumber(5 * i + 4, i + 1);
             }
             data.bumpVersion();
             return data;

@@ -978,20 +978,14 @@ public class DeferredRenderer {
 
         // Set uniforms.
         setMatrixUniforms(program);
-        program.setUniform("mat_diffuseColor", material.getDiffuseColor())
-            .setUniform("mat_specularColor", material.getSpecularColor())
-            .setUniform("mat_exponent", material.getExponent());
+        program.setUniform("mat_diffuseColor", material.getDiffuseColor());
         useTexture(program, material.getDiffuseTexture(), "mat_hasDiffuseTexture", "mat_diffuseTexture", texUnitStart + 0);
-        useTexture(program, material.getSpecularTexture(), "mat_hasSpecularTexture", "mat_specularTexture", texUnitStart + 1);
-        useTexture(program, material.getExponentTexture(), "mat_hasExponentTexture", "mat_exponentTexture", texUnitStart + 2);
 
         // Draw the mesh part.
         drawElement(indexData, meshPart);
 
         // Tear down the program.
         unuseTexture(program, material.getDiffuseTexture());
-        unuseTexture(program, material.getSpecularTexture());
-        unuseTexture(program, material.getExponentTexture());
 
         tearDownVertexShaderUniforms(program, mesh);
         disableVertexAttributes(program, mesh);

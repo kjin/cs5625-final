@@ -22,7 +22,7 @@ import javax.vecmath.Color4f;
 
 public class SmokeParticleMaterial extends AbstractMaterial {
     /* Blinn-Phong material properties. */
-    private Color4f diffuseColor = new Color4f(1.0f, 1.0f, 1.0f, 1.0f);
+    private Color4f diffuseColor = new Color4f(1.0f, 0.0f, 1.0f, 1.0f);
     private Color3f specularColor = new Color3f(1.0f, 1.0f, 1.0f);
     private float exponent = 50.0f;
 

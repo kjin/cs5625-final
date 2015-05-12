@@ -54,19 +54,25 @@ public class FancyParticleSystem
 		IndexData.Builder builder = indexData.startBuild();
 		for (int i = 0; i < NUM_PARTICLES; i++)
 		{
-			builder.add(4 * i + 0);
-			builder.add(4 * i + 1);
-			builder.add(4 * i + 2);
-			builder.add(4 * i + 2);
-			builder.add(4 * i + 1);
-			builder.add(4 * i + 3);
+			builder.add(5 * i + 0);
+			builder.add(5 * i + 1);
+			builder.add(5 * i + 4);
+			builder.add(5 * i + 1);
+			builder.add(5 * i + 2);
+			builder.add(5 * i + 4);
+			builder.add(5 * i + 2);
+			builder.add(5 * i + 3);
+			builder.add(5 * i + 4);
+			builder.add(5 * i + 3);
+			builder.add(5 * i + 0);
+			builder.add(5 * i + 4);
 		}
 		builder.endBuild();
 		
 		fancyMesh = new SmokeParticleMesh(NUM_PARTICLES);
 		fancyMesh.setVertexData(new Value<VertexData>(vertexData));
 		fancyMesh.setIndexData(new Value<IndexData>(indexData));
-				
+		
 		MeshPart fancyMeshPart = new MeshPart(GL2.GL_TRIANGLES, 0, 4 * NUM_PARTICLES, new Value<Material>(new SmokeParticleMaterial()));
 		fancyMesh.addPart(fancyMeshPart);
 		
@@ -133,7 +139,7 @@ public class FancyParticleSystem
 			inactiveParticles.remove(inactiveParticles.size() - 1);
 			particle.position.set(position);
 			particle.velocity.set(dir);
-			particle.lifespan = 60;
+			particle.lifespan = 120;
 			activeParticles.add(particle);
 		}
 	}

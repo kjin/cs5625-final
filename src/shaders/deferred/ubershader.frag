@@ -191,26 +191,8 @@ void main() {
 	}
 	/*Particle************************************/
 	else if (materialID == SMOKE_PARTICLE_MATERIAL_ID) {
-		// Encoding: (matID, normal[3], color[4], position[3], exponent, specular, 0)
-		float exponent = materialParams3.w;
-		vec3 specular = materialParams4.xyz;
-		vec3 v = normalize(-position);
-		
-		float factor = getShadowFactor(position);
-		
-		vec3 l = spotLight_eyePosition - position;
-		float d = sqrt(dot(l, l));
-		float attenuation = dot(spotLight_attenuation, vec3(1, d, d*d));
-		l = normalize(l);
-		
-		//diffuse calculation
-		float nlDotProd = max(dot(normal, l), 0);
-		
-		//specular calculation
-		vec3 h = normalize(l + v);
-		float nhDotProd = max(dot(normal, h), 0);
-		
-		gl_FragColor.xyz += factor * (color * nlDotProd + specular * pow(nhDotProd, exponent)) * spotLight_color / attenuation;
+		// Encoding: (matID, normal[3], color[4], position[3], 0, 0, 0)
+		gl_FragColor.xyz += color;
 	}
 	else {
 		if (!spotLight_enabled) {
