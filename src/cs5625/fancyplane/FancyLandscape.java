@@ -57,6 +57,8 @@ public class FancyLandscape {
 		fancyPart.material = new Value<Material>(material);
 		//fancyPart.material = new Value<Material>(new SingleColorMaterial());
 		
+		fancyMesh.setCastsShadow(false);
+		
 		nodes = new SceneTreeNode[2];
 		for (int i = 0; i < nodes.length; i++)
 		{

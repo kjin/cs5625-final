@@ -23,6 +23,6 @@ public class SmokeParticleMesh extends UnstructuredMesh {
 	public void removeParticle(int index)
 	{
 		// just place it down low so no one can see it
-		particlePositions[index].set(0, -100, 0);
+		particlePositions[index].set(0, 1000, 0);
 	}
 }

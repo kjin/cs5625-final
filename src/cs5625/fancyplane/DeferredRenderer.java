@@ -1045,7 +1045,7 @@ public class DeferredRenderer {
         for (int i = 0; i < spMesh.particlePositions.length; i++)
         {
         	// not sure why reverse traversal works :|
-        	program.setUniform("particleLocations[0][" + (spMesh.particlePositions.length - i) + "]", spMesh.particlePositions[i]);
+        	program.setUniform("particleLocations[" + i + "]", spMesh.particlePositions[i]);
         }
         program.setUniform("mat_diffuseColor", material.getDiffuseColor())
             .setUniform("mat_specularColor", material.getSpecularColor())
@@ -1136,6 +1136,16 @@ public class DeferredRenderer {
 
         // Set uniforms.
         setMatrixUniforms(program);
+        if (vertexData instanceof SmokeParticleVertexData)
+        {
+            // Set particle positions
+            SmokeParticleMesh spMesh = (SmokeParticleMesh)mesh;
+            for (int i = 0; i < spMesh.particlePositions.length; i++)
+            {
+            	// not sure why reverse traversal works :|
+            	program.setUniform("particleLocations[0][" + (spMesh.particlePositions.length - i) + "]", spMesh.particlePositions[i]);
+            }
+        }
 
         // Draw the mesh part.
         drawElement(indexData, meshPart);

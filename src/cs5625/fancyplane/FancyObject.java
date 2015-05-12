@@ -54,7 +54,7 @@ public class FancyObject {
 			e.printStackTrace();
 		}
 		TriMesh fancyMesh = meshes.get(0);
-		//fancyMesh.setCastsShadow(false);
+		fancyMesh.setCastsShadow(true);
 		
 		if(this.hasSpecialMaterial()) {
 			MeshPart fancyPart = meshes.get(0).getPart(0);
