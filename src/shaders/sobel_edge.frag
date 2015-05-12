@@ -37,7 +37,7 @@ void main() {
 	if(d < threshold) {
 		gl_FragColor = texture2DRect(texture, geom_texCoord);
 	} else {
-		gl_FragColor.xyz = texture2DRect(texture, geom_texCoord).xyz / 3.0;
+		gl_FragColor.xyz = texture2DRect(texture, geom_texCoord).xyz / 1.5;
 	}
 	
 	//gl_FragColor = vec4(1-d,1-d,1-d,1.0);
