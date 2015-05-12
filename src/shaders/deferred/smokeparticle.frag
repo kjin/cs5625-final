@@ -25,14 +25,23 @@ void main()
 	vec4 diffuse = mat_diffuseColor;
 	
 	// normal stuffs
+	vec3 normal = vec3(0,0,1);
+	float alpha = 0;
 	if (mat_hasNormalTexture) {
 		vec4 tex = texture2D(mat_normalTexture, geom_texCoord);
-		diffuse = diffuse * tex;
+		
+		normal = tex.xyz;
+		normal = normalize(normal);
+		
+		alpha = tex.w;
 	}
 	
-	// Encoding: (matID, normal[3], color[4], position[3], 0, 0, 0)
-	gl_FragData[0] = vec4(float(SMOKE_PARTICLE_MATERIAL_ID), 0, 0, 1);
-	gl_FragData[1] = diffuse;
-	gl_FragData[2] = vec4(geom_position, 0.0);
-	gl_FragData[3] = vec4(0.0);
+	if(alpha > 0.1)
+	{
+		// Encoding: (matID, normal[3], color[4], position[3], 0, 0, 0)
+		gl_FragData[0] = vec4(float(SMOKE_PARTICLE_MATERIAL_ID), normal);
+		gl_FragData[1] = diffuse;
+		gl_FragData[2] = vec4(geom_position, 0.0);
+		gl_FragData[3] = vec4(0.0);
+	}
 }	

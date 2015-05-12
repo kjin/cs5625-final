@@ -10,6 +10,7 @@ import javax.vecmath.Vector3f;
 import cs5625.gfx.camera.Camera;
 import cs5625.gfx.camera.PerspectiveCamera;
 import cs5625.gfx.json.NamedObject;
+import cs5625.gfx.light.PointLight;
 import cs5625.gfx.light.ShadowingSpotLight;
 import cs5625.gfx.material.Material;
 import cs5625.gfx.material.SingleColorMaterial;
@@ -45,6 +46,14 @@ public class FancyGameController {
     	SceneTreeNode spotLightNode = new SceneTreeNode();
     	spotLightNode.setData(new Value<NamedObject>(spotLight));
     	fancyScene.addChild(spotLightNode);
+    	
+    	PointLight pointLight = new PointLight();
+    	pointLight.setPosition(new Point3f(30,45,1));
+    	pointLight.setColor(new Color3f(1.0f, 1.0f, 1.0f));
+    	//pointLight.setAttenuation(1, 1, 1);
+    	SceneTreeNode pointLightNode = new SceneTreeNode();
+    	pointLightNode.setData(new Value<NamedObject>(pointLight));
+    	fancyScene.addChild(pointLightNode);
     	
     	// sun stuff
     	/* make the sun out of a doodad. */

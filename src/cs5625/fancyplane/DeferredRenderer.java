@@ -345,7 +345,7 @@ public class DeferredRenderer {
 	        // Sobel edge post processing
 	        boolean edgeEnabled = true;
 	        if (edgeEnabled) {
-	            float threshold = 0.2f;
+	            float threshold = 0.5f;
 	            float contrast = 10f;
 	            int offset = 1;
 	        	
