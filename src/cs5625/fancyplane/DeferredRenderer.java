@@ -1037,7 +1037,7 @@ public class DeferredRenderer {
         int texUnitStart = setupVertexShaderUniforms(program, mesh);
         
         gl.glEnable(GL2.GL_BLEND);
-        gl.glBlendFunc(GL2.GL_ONE, GL2.GL_ONE);
+        gl.glBlendFunc(GL2.GL_SRC_ALPHA, GL2.GL_ONE_MINUS_SRC_ALPHA);
 
         // Set uniforms.
         setMatrixUniforms(program);
