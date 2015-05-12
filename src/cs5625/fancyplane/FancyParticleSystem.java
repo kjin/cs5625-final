@@ -119,7 +119,7 @@ public class FancyParticleSystem
 		vOut.normalize();
 	}
 	
-	public void releaseParticles(int numParticles, Point3f position, Vector3f directionMagnitude, float randomness)
+	public void releaseParticles(int numParticles, Point3f position, Vector3f directionMagnitude, float randomness, float range)
 	{
 		Vector3f dir = new Vector3f();
 		Vector3f dirT = new Vector3f();
@@ -149,5 +149,10 @@ public class FancyParticleSystem
 			particle.lifespan = particleLifespan;
 			activeParticles.add(particle);
 		}
+	}
+	
+	public void releaseParticles(int numParticles, Point3f position, Vector3f directionMagnitude, float randomness)
+	{
+		releaseParticles(numParticles, position, directionMagnitude, randomness, 0);
 	}
 }

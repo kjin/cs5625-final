@@ -96,7 +96,7 @@ public class FancyGameController {
 			{
 				if (enemies[i].health > 0 && fancyPlayer.collidesWith(enemies[i]))
 				{
-					doCollisionAftermath(fancyPlayer, enemies[i], 20, 20);
+					doCollisionAftermath(fancyPlayer, enemies[i], 100, 100);
 				}
 			}
 		}
@@ -107,7 +107,7 @@ public class FancyGameController {
 			{
 				if (fancyPlayer.health > 0 && fancyPlayer.collidesWith(bullets[i]))
 				{
-					doCollisionAftermath(fancyPlayer, bullets[i], 20, 1);
+					doCollisionAftermath(fancyPlayer, bullets[i], 100, 0);
 				}
 				if (bullets[i].health > 0)
 				{
@@ -115,7 +115,7 @@ public class FancyGameController {
 					{
 						if (enemies[j].health > 0 && enemies[j].collidesWith(bullets[i]))
 						{
-							doCollisionAftermath(enemies[j], bullets[i], 20, 1);
+							doCollisionAftermath(enemies[j], bullets[i], 100, 0);
 						}
 						if (bullets[i].health <= 0)
 						{
@@ -138,14 +138,14 @@ public class FancyGameController {
 			temp.set(0, 1, 0);
 			temp.normalize();
 			temp.scale(0.05f);
-			fancyParticles.fire.releaseParticles(o1Particles, o1.getPosition(), temp, 0.5f);
+			fancyParticles.blackfire.releaseParticles(o1Particles, o1.getPosition(), temp, 0.5f);
 		}
 		if (o2Particles > 0 && o2.getHealth() == 0)
 		{
 			temp.set(0, 1, 0);
 			temp.normalize();
 			temp.scale(0.05f);
-			fancyParticles.fire.releaseParticles(o2Particles, o2.getPosition(), temp, 0.5f);
+			fancyParticles.blackfire.releaseParticles(o2Particles, o2.getPosition(), temp, 0.5f);
 		}
 	}
 	
