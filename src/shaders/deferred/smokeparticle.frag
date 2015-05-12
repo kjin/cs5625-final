@@ -36,12 +36,9 @@ void main()
 		alpha = tex.w;
 	}
 	
-	if(alpha > 0.1)
-	{
-		// Encoding: (matID, normal[3], color[4], position[3], 0, 0, 0)
-		gl_FragData[0] = vec4(float(SMOKE_PARTICLE_MATERIAL_ID), normal);
-		gl_FragData[1] = diffuse;
-		gl_FragData[2] = vec4(geom_position, 0.0);
-		gl_FragData[3] = vec4(0.0);
-	}
+	// Encoding: (matID, normal[3], color[4], position[3], 0, 0, 0)
+	gl_FragData[0] = vec4(float(SMOKE_PARTICLE_MATERIAL_ID), normal);
+	gl_FragData[1] = diffuse;
+	gl_FragData[2] = vec4(geom_position, 0.0);
+	gl_FragData[3] = vec4(0.0);
 }	

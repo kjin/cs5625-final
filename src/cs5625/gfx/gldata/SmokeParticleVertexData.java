@@ -21,7 +21,7 @@ import java.util.HashMap;
 public class SmokeParticleVertexData extends VertexData {
     public static final AttributeSpec PARTICLE_INDEX = new AttributeSpec("particle_index", 1,
             GL2.GL_FLOAT, false, 4 * 2, 0);
-    public static final AttributeSpec PARTICLE_CORNER = new AttributeSpec("particle_color", 1,
+    public static final AttributeSpec PARTICLE_CORNER = new AttributeSpec("particle_corner", 1,
             GL2.GL_FLOAT, false, 4 * 2, 4);
     private static final HashMap<String, AttributeSpec> vertexAttributes = new HashMap<String, AttributeSpec>();
 
