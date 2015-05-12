@@ -86,6 +86,7 @@ public class FancyParticleSystem
 			if (particle.lifespan <= 0)
 			{
 				itr.remove();
+				fancyMesh.removeParticle(particle.id);
 				inactiveParticles.add(particle);
 			}
 		}

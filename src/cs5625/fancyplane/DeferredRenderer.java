@@ -1047,10 +1047,11 @@ public class DeferredRenderer {
         // Set uniforms.
         setMatrixUniforms(program);
         // Set particle positions
-        Point3f[] particleLocations = ((SmokeParticleMesh)mesh).particlePositions;
-        for (int i = 0; i < 200; i++)
+        SmokeParticleMesh spMesh = (SmokeParticleMesh)mesh;
+        for (int i = 0; i < spMesh.particlePositions.length; i++)
         {
-        	program.setUniform("particleLocations[0][" + (i + 1) + "]", particleLocations[i]);
+        	// not sure why reverse traversal works :|
+        	program.setUniform("particleLocations[0][" + (spMesh.particlePositions.length - i) + "]", spMesh.particlePositions[i]);
         }
         program.setUniform("mat_diffuseColor", material.getDiffuseColor())
             .setUniform("mat_specularColor", material.getSpecularColor())

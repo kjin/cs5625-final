@@ -269,6 +269,13 @@ public class Program implements GLResource {
 		return this;
 	}
 
+	public Program setUniform(String name, float[] x) {
+		if (hasUniform(name)) {
+			getUniform(name).set1FloatV(x);
+		}
+		return this;
+	}
+
 	public Program setUniform(String name, float x1, float x2) {
 		if (hasUniform(name)) {
 			getUniform(name).set2Float(x1, x2);

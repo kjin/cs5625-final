@@ -121,6 +121,10 @@ public class Uniform {
     public void set1Float(float x) {
         this.gl.glUniform1f(this.location, x);
     }
+    
+    public void set1FloatV(float[] x) {
+    	this.gl.glUniform1fv(this.location, x.length, x, 0);
+    }
 
     public void set2Float(float x, float y) {
         this.gl.glUniform2f(this.location, x, y);
