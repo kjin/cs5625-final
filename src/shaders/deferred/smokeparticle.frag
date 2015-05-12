@@ -21,6 +21,9 @@ uniform vec4 mat_diffuseColor;
 uniform bool mat_hasNormalTexture;
 uniform sampler2D mat_normalTexture;
 
+uniform bool mat_hasToonTexture;
+uniform sampler2D mat_toonTexture;
+
 uniform int pointLight_count;
 uniform vec3 pointLight_eyePosition[MAX_LIGHTS];
 uniform vec3 pointLight_attenuation[MAX_LIGHTS];
@@ -41,21 +44,33 @@ void main()
 		
 		alpha = tex.w;
 	}
-	vec3 color = vec3(0.0, 0.0, 0.0);
-	for (int i=0; i<pointLight_count; i++) {
-		vec3 l = pointLight_eyePosition[i] - geom_position;
+	
+	// get the color
+	vec3 color = diffuse.xyz;
+	if (mat_hasToonTexture) {
+		vec3 l = pointLight_eyePosition[0] - geom_position;
 		float d = sqrt(dot(l, l));
 		l = normalize(l);
-		float attenuation = dot(pointLight_attenuation[i], vec3(1, d, d*d));
 		float dotProd = max(dot(normal,l), 0);
-		color = diffuse.xyz * dotProd * pointLight_color[i];
+	
+		vec4 tex = texture2D(mat_toonTexture, vec2(dotProd,0.0));
+		color = tex.xyz;
+	} else {
+		for (int i=0; i<pointLight_count; i++) {
+			vec3 l = pointLight_eyePosition[i] - geom_position;
+			float d = sqrt(dot(l, l));
+			l = normalize(l);
+			float attenuation = dot(pointLight_attenuation[i], vec3(1, d, d*d));
+			float dotProd = max(dot(normal,l), 0);
+			color = diffuse.xyz; // * dotProd;
+		}
 	}
 	
 	// Only store smoke in the last buffer
 	gl_FragData[0] = vec4(0.0, 0.0, 0.0, 0.0);
 	gl_FragData[1] = vec4(0.0, 0.0, 0.0, 0.0);
 	gl_FragData[2] = vec4(0.0, 0.0, 0.0, 0.0);
-	gl_FragData[3] = vec4(1 - color.x, 1 - color.y, 1 - color.z, alpha);
+	gl_FragData[3] = vec4(color, alpha);
 	
 	/*gl_FragData[0] = vec4(float(SMOKE_PARTICLE_MATERIAL_ID), normal);
 	gl_FragData[1] = vec4(color, 1);

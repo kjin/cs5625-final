@@ -367,7 +367,7 @@ public class DeferredRenderer {
 	        // Bloom post processing
 	        boolean bloomEnabled = false;
 	        if (displayMode == SCENE_RENDERERING && bloomEnabled) {
-	            float brightnessThreshold = 0.5f;
+	            float brightnessThreshold = 0.0f;
 	            int bloomLayers = 4;
 	            int[] bloomFilterSizes = {2, 5, 10, 20};
 	            float[] bloomFilterStdev = {0.4f, 1, 2.5f, 4};   
@@ -388,7 +388,7 @@ public class DeferredRenderer {
 	        	screenBuffer.swap();
 	
 	        	gaussianBlurProgram.use();
-	        	for (int i = 3; i < 4; i++)
+	        	for (int i = 1; i < 2; i++)
 	        	{
 	        		gaussianBlurProgram.getUniform("size").set1Int(bloomFilterSizes[i]);
 	        		gaussianBlurProgram.getUniform("stdev").set1Float(bloomFilterStdev[i]);

@@ -30,6 +30,9 @@ public class SmokeParticleMaterial extends AbstractMaterial {
 
     /* Optional textures for texture parameterized rendering. */
     private Holder<Texture2DData> normalTexture = null;
+    
+    /* Optional texture for 1D toon shading. */
+    private Holder<Texture2DData> toonTexture = null;
 
     public SmokeParticleMaterial() {
     	String key = ObjectCacheKey.makeKey(FileTexture2DData.class, "data/textures/fancy-cloud-normal.png");
@@ -55,6 +58,15 @@ public class SmokeParticleMaterial extends AbstractMaterial {
 
     public SmokeParticleMaterial setNormalTexture(Holder<Texture2DData> texture) {
         normalTexture = texture;
+        return this;
+    }
+    
+    public Holder<Texture2DData> getToonTexture() {
+        return toonTexture;
+    }
+
+    public SmokeParticleMaterial setToonTexture(Holder<Texture2DData> texture) {
+        toonTexture = texture;
         return this;
     }
 

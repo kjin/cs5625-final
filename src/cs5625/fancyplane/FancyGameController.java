@@ -135,14 +135,14 @@ public class FancyGameController {
 		o2.setHealth(o2.getHealth() - 1);
 		if (o1Particles > 0 && o1.getHealth() == 0)
 		{
-			temp.set(0, 0, 0.1f);
+			temp.set(-o1.forward.x / 10.0f, 0.05f, 0.0f);
 			fancyParticles.blackfire.releaseParticles(o1Particles / 2, o1.getPosition(), temp, 0.9f, 2);
 			temp.set(0, 0, -0.1f);
 			fancyParticles.blackfire.releaseParticles(o1Particles / 2, o1.getPosition(), temp, 0.9f, 2);
 		}
 		if (o2Particles > 0 && o2.getHealth() == 0)
 		{
-			temp.set(0, 0, 0.1f);
+			temp.set(-o2.forward.x / 10.0f, 0.05f, 0.0f);
 			fancyParticles.blackfire.releaseParticles(o2Particles / 2, o2.getPosition(), temp, 0.9f, 2);
 			temp.set(0, 0, -0.1f);
 			fancyParticles.blackfire.releaseParticles(o2Particles / 2, o2.getPosition(), temp, 0.9f, 2);
