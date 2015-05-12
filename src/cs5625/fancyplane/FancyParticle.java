@@ -28,7 +28,8 @@ public class FancyParticle
 	
 	public FancyParticle(int id)
 	{
-		position = new Point3f();
+		this.id = id;
+		position = new Point3f(0,0,0);
 		velocity = new Vector3f();
 		lifespan = 0;
 	}

@@ -1047,7 +1047,11 @@ public class DeferredRenderer {
         // Set uniforms.
         setMatrixUniforms(program);
         // Set particle positions
-        program.setUniform("particleLocations", ((SmokeParticleMesh)mesh).particlePositions);
+        Point3f[] particleLocations = ((SmokeParticleMesh)mesh).particlePositions;
+        for (int i = 0; i < 200; i++)
+        {
+        	program.setUniform("particleLocations[0][" + (i + 1) + "]", particleLocations[i]);
+        }
         program.setUniform("mat_diffuseColor", material.getDiffuseColor())
             .setUniform("mat_specularColor", material.getSpecularColor())
             .setUniform("mat_exponent", material.getExponent());

@@ -19,7 +19,7 @@ const int TOP_RIGHT_CORNER = 3;
 
 uniform mat4 sys_modelViewMatrix;
 uniform mat4 sys_projectionMatrix;
-uniform float particleLocations[600]; // should be FancyParticleSystem::NUM_PARTICLES
+uniform vec3 particleLocations[200]; // should be FancyParticleSystem::NUM_PARTICLES
 
 varying vec3 geom_position;
 varying vec2 geom_texCoord;
@@ -47,9 +47,7 @@ void main()
 		vertexOffset = vec3(1, 1, 0);
 		geom_texCoord = vec2(1, 1);
 	}
-	vec3 particleLocation = vec3(particleLocations[int(3 * vert_particle_index)],
-								 particleLocations[int(3 * vert_particle_index + 1)],
-							 	 particleLocations[int(3 * vert_particle_index + 2)]);
+	vec3 particleLocation = particleLocations[int(vert_particle_index)];
 	vec4 position = sys_modelViewMatrix * vec4(particleLocation + 0.5 * vertexOffset,1);
 	geom_position = position.xyz;
 	gl_Position = sys_projectionMatrix * position;
