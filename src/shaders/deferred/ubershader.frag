@@ -191,20 +191,13 @@ void main() {
 	}
 	/*Particle************************************/
 	else if (materialID == SMOKE_PARTICLE_MATERIAL_ID) {
-		// Encoding: (matID, normal[3], color[4], position[3], 0, 0, 0)
-		for (int i=0; i<pointLight_count; i++) {
-			vec3 l = pointLight_eyePosition[i] - position;
-			float d = sqrt(dot(l, l));
-			l = normalize(l);
-			float attenuation = dot(pointLight_attenuation[i], vec3(1, d, d*d));
-			float dotProd = max(dot(normal,l), 0);
-			//gl_FragColor.xyz += color * dotProd * pointLight_color[i] / attenuation;
-			gl_FragColor.xyz += color.xyz * dotProd * pointLight_color[i];
-		}
+
 	}
 	else {
 		if (!spotLight_enabled) {
 			gl_FragColor.xyz += color;
 		}
-	}		
+	}
+	
+	gl_FragColor.xyz += materialParams4.xyz;	
 }

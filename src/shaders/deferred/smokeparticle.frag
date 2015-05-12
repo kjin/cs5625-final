@@ -10,6 +10,7 @@
  */
 
 #version 120
+#define MAX_LIGHTS 40
 
 const int SMOKE_PARTICLE_MATERIAL_ID = 5;
 
@@ -19,6 +20,11 @@ varying vec2 geom_texCoord;
 uniform vec4 mat_diffuseColor;
 uniform bool mat_hasNormalTexture;
 uniform sampler2D mat_normalTexture;
+
+uniform int pointLight_count;
+uniform vec3 pointLight_eyePosition[MAX_LIGHTS];
+uniform vec3 pointLight_attenuation[MAX_LIGHTS];
+uniform vec3 pointLight_color[MAX_LIGHTS];
 
 void main()
 {
@@ -35,10 +41,19 @@ void main()
 		
 		alpha = tex.w;
 	}
+	vec3 color = vec3(0.0, 0.0, 0.0);
+	for (int i=0; i<pointLight_count; i++) {
+		vec3 l = pointLight_eyePosition[i] - geom_position;
+		float d = sqrt(dot(l, l));
+		l = normalize(l);
+		float attenuation = dot(pointLight_attenuation[i], vec3(1, d, d*d));
+		float dotProd = max(dot(normal,l), 0);
+		color = diffuse.xyz * dotProd * pointLight_color[i];
+	}
 	
-	// Encoding: (matID, normal[3], color[4], position[3], 0, 0, 0)
-	gl_FragData[0] = vec4(float(SMOKE_PARTICLE_MATERIAL_ID), normal);
-	gl_FragData[1] = diffuse;
-	gl_FragData[2] = vec4(geom_position, 0.0);
-	gl_FragData[3] = vec4(0.0);
+	// Only store smoke in the last buffer
+	gl_FragData[0] = vec4(0.0, 0.0, 0.0, 0.0);
+	gl_FragData[1] = vec4(0.0, 0.0, 0.0, 0.0);
+	gl_FragData[2] = vec4(0.0, 0.0, 0.0, 0.0);
+	gl_FragData[3] = vec4(color, alpha);
 }	

@@ -74,5 +74,5 @@ void main()
 	gl_FragData[0] = vec4(float(XTOON_MATERIAL_ID), geom_normal);
 	gl_FragData[1] = color;
 	gl_FragData[2] = vec4(geom_position, 0.0);
-	gl_FragData[3] = vec4(dFdx(p.z), dFdy(p.z), 0.0, 0.0);
+	gl_FragData[3] = vec4(0.0, 0.0, 0.0, 0.0);
 }	
