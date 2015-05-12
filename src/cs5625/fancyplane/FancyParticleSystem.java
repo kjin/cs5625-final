@@ -5,6 +5,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 
 import javax.media.opengl.GL2;
+import javax.vecmath.Color4f;
 import javax.vecmath.Point3f;
 import javax.vecmath.Vector3f;
 
@@ -24,35 +25,39 @@ import cs5625.gfx.scenetree.SceneTreeNode;
 
 public class FancyParticleSystem
 {
-	int NUM_PARTICLES = 400;
+	int numParticles = 100;
 	
 	SceneTreeNode node;
 	
 	LinkedList<FancyParticle> activeParticles;
 	ArrayList<FancyParticle> inactiveParticles;
 	
+	public float particleLifespan = 120;
+	public float particleSize = 1;
+	
 	SmokeParticleMesh fancyMesh;
 	
-	public FancyParticleSystem(SceneTreeNode parentNode)
+	public FancyParticleSystem(SceneTreeNode parentNode, int numParticles, Color4f color)
 	{
+		this.numParticles = numParticles;
 		node = new SceneTreeNode();
 		parentNode.addChild(node);
 		
 		activeParticles = new LinkedList<FancyParticle>();
 		inactiveParticles = new ArrayList<FancyParticle>();
-		for (int i = 0; i < NUM_PARTICLES; i++)
+		for (int i = 0; i < numParticles; i++)
 		{
 			inactiveParticles.add(new FancyParticle(i));
 		}
 		
 		// Init vertex data
 		SmokeParticleVertexData vertexData = new SmokeParticleVertexData();
-		vertexData.startBuild().setNumParticles(NUM_PARTICLES).endBuild();
+		vertexData.startBuild().setNumParticles(numParticles).endBuild();
 		
 		// Init index data
 		IndexData indexData = new IndexData();
 		IndexData.Builder builder = indexData.startBuild();
-		for (int i = 0; i < NUM_PARTICLES; i++)
+		for (int i = 0; i < numParticles; i++)
 		{
 			builder.add(5 * i + 0);
 			builder.add(5 * i + 1);
@@ -69,11 +74,13 @@ public class FancyParticleSystem
 		}
 		builder.endBuild();
 		
-		fancyMesh = new SmokeParticleMesh(NUM_PARTICLES);
+		fancyMesh = new SmokeParticleMesh(numParticles);
 		fancyMesh.setVertexData(new Value<VertexData>(vertexData));
 		fancyMesh.setIndexData(new Value<IndexData>(indexData));
 		
-		MeshPart fancyMeshPart = new MeshPart(GL2.GL_TRIANGLES, 0, 15 * NUM_PARTICLES, new Value<Material>(new SmokeParticleMaterial()));
+		SmokeParticleMaterial smokeParticleMaterial = new SmokeParticleMaterial();
+		smokeParticleMaterial.setDiffuseColor(color);
+		MeshPart fancyMeshPart = new MeshPart(GL2.GL_TRIANGLES, 0, 15 * numParticles, new Value<Material>(smokeParticleMaterial));
 		fancyMesh.addPart(fancyMeshPart);
 		
 		node = new SceneTreeNode();
@@ -88,7 +95,7 @@ public class FancyParticleSystem
 		{
 			FancyParticle particle = itr.next();
 			particle.update();
-			fancyMesh.setParticlePosition(particle.id, particle.position, particle.lifespan / 120.0f);
+			fancyMesh.setParticlePosition(particle.id, particle.position, particleSize * particle.lifespan / particleLifespan);
 			if (particle.lifespan <= 0)
 			{
 				itr.remove();
@@ -139,7 +146,7 @@ public class FancyParticleSystem
 			inactiveParticles.remove(inactiveParticles.size() - 1);
 			particle.position.set(position);
 			particle.velocity.set(dir);
-			particle.lifespan = 120;
+			particle.lifespan = particleLifespan;
 			activeParticles.add(particle);
 		}
 	}

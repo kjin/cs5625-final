@@ -19,9 +19,9 @@ public class FancyEnemy extends FancyShip
 	int FIRE_RATE = 100;
 	int time;
 	
-	public FancyEnemy(SceneTreeNode parentNode, FancyBulletManager bulletManager)
+	public FancyEnemy(SceneTreeNode parentNode, FancyBulletManager bulletManager, FancyParticleEngine particles)
 	{
-		super(parentNode, "fancy-enemy", FancyTeam.Enemy, bulletManager);
+		super(parentNode, "fancy-enemy", FancyTeam.Enemy, bulletManager, particles);
 		collisionRadius = 1;
 		maxHealth = 5;
 		time = (int)(FIRE_RATE * Math.random());
