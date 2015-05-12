@@ -73,7 +73,7 @@ public class FancyParticleSystem
 		fancyMesh.setVertexData(new Value<VertexData>(vertexData));
 		fancyMesh.setIndexData(new Value<IndexData>(indexData));
 		
-		MeshPart fancyMeshPart = new MeshPart(GL2.GL_TRIANGLES, 0, 5 * NUM_PARTICLES, new Value<Material>(new SmokeParticleMaterial()));
+		MeshPart fancyMeshPart = new MeshPart(GL2.GL_TRIANGLES, 0, 15 * NUM_PARTICLES, new Value<Material>(new SmokeParticleMaterial()));
 		fancyMesh.addPart(fancyMeshPart);
 		
 		node = new SceneTreeNode();

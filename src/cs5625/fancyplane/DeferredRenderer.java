@@ -1045,7 +1045,7 @@ public class DeferredRenderer {
         for (int i = 0; i < spMesh.particlePositionScale.length; i++)
         {
         	// not sure why reverse traversal works :|
-        	program.setUniform("particlePositionScale[" + i + "]", spMesh.particlePositionScale[spMesh.particlePositionScale.length - i - 1]);
+        	program.setUniform("particlePositionScale[" + i + "]", spMesh.particlePositionScale[i]);
         }
         program.setUniform("mat_diffuseColor", material.getDiffuseColor());
         useTexture(program, material.getNormalTexture(), "mat_hasNormalTexture", "mat_normalTexture", texUnitStart + 0);
@@ -1137,7 +1137,7 @@ public class DeferredRenderer {
             for (int i = 0; i < spMesh.particlePositionScale.length; i++)
             {
             	// not sure why reverse traversal works :|
-            	program.setUniform("particlePositionScale[" + i + "]", spMesh.particlePositionScale[spMesh.particlePositionScale.length - i - 1]);
+            	program.setUniform("particlePositionScale[" + i + "]", spMesh.particlePositionScale[i]);
             }
         }
 
