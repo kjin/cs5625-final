@@ -20,7 +20,7 @@ const int CENTER = 4;
 
 uniform mat4 sys_modelViewMatrix;
 uniform mat4 sys_projectionMatrix;
-uniform mat4 sys_inverseViewMatrix;
+uniform mat4 sys_viewMatrix;
 uniform vec3 particleLocations[200]; // should be FancyParticleSystem::NUM_PARTICLES
 
 varying vec3 geom_position;
@@ -28,34 +28,33 @@ varying vec2 geom_texCoord;
 
 void main()
 {
-	vec3 upVector = (sys_inverseViewMatrix * vec4(0,1,0,1)).xyz;
-	upVector = normalize(upVector);
+	float radius = 1.0f;
 	
-	vec3 rightVector = (sys_inverseViewMatrix * vec4(1,0,0,1)).xyz;
-	rightVector = normalize(rightVector);
+	vec3 rightVector = vec3(sys_viewMatrix[0][0], sys_viewMatrix[1][0], sys_viewMatrix[2][0]);
+	vec3 upVector = vec3(sys_viewMatrix[0][1], sys_viewMatrix[1][1], sys_viewMatrix[2][1]);
 	
 	vec3 depthVector = cross(rightVector,upVector);
-	rightVector = cross(upVector,depthVector);
+	//rightVector = cross(upVector,depthVector);
 
 	vec3 vertexOffset;
 	if (vert_particle_corner == BOTTOM_LEFT_CORNER)
 	{
-		vertexOffset = -upVector - rightVector;
+		vertexOffset = radius*(-upVector - rightVector);
 		geom_texCoord = vec2(0, 0);
 	}
 	else if (vert_particle_corner == BOTTOM_RIGHT_CORNER)
 	{
-		vertexOffset = -upVector + rightVector;
+		vertexOffset = radius*(-upVector + rightVector);
 		geom_texCoord = vec2(1, 0);
 	}
 	else if (vert_particle_corner == TOP_RIGHT_CORNER)
 	{
-		vertexOffset = upVector + rightVector;
+		vertexOffset = radius*(upVector + rightVector);
 		geom_texCoord = vec2(1, 1);
 	}
 	else if (vert_particle_corner == TOP_LEFT_CORNER)
 	{
-		vertexOffset = upVector - rightVector;
+		vertexOffset = radius*(upVector - rightVector);
 		geom_texCoord = vec2(0, 1);
 	}
 	else if (vert_particle_corner == CENTER)
@@ -63,6 +62,8 @@ void main()
 		vertexOffset = vec3(0, 0, depthVector);
 		geom_texCoord = vec2(0.5, 0.5);
 	}
+	
+	geom_texCoord /= 2;
 	vec3 particleLocation = particleLocations[int(vert_particle_index)];
 	vec4 position = sys_modelViewMatrix * vec4(particleLocation + 0.5 * vertexOffset,1);
 	geom_position = position.xyz;

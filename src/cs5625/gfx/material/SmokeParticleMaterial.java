@@ -12,27 +12,28 @@
 package cs5625.gfx.material;
 
 import com.google.gson.JsonObject;
+
+import cs5625.gfx.gldata.FileTexture2DData;
 import cs5625.gfx.gldata.Texture2DData;
 import cs5625.gfx.json.AbstractNamedObject;
 import cs5625.gfx.json.JsonUtil;
 import cs5625.gfx.objcache.Holder;
+import cs5625.gfx.objcache.ObjectCacheKey;
+import cs5625.gfx.objcache.Reference;
 
 import javax.vecmath.Color3f;
 import javax.vecmath.Color4f;
 
 public class SmokeParticleMaterial extends AbstractMaterial {
     /* Blinn-Phong material properties. */
-    private Color4f diffuseColor = new Color4f(1.0f, 0.0f, 1.0f, 1.0f);
-    private Color3f specularColor = new Color3f(1.0f, 1.0f, 1.0f);
-    private float exponent = 50.0f;
+    private Color4f diffuseColor = new Color4f(1.0f, 1.0f, 1.0f, 1.0f);
 
     /* Optional textures for texture parameterized rendering. */
-    private Holder<Texture2DData> diffuseTexture = null;
-    private Holder<Texture2DData> specularTexture = null;
-    private Holder<Texture2DData> exponentTexture = null;
+    private Holder<Texture2DData> normalTexture = null;
 
     public SmokeParticleMaterial() {
-        /* Default constructor. */
+    	String key = ObjectCacheKey.makeKey(FileTexture2DData.class, "data/textures/fancy-cloud-normal.png");
+    	normalTexture = new Reference<Texture2DData>(key);
     }
 
     public SmokeParticleMaterial(Color4f diffuse) {
@@ -48,48 +49,12 @@ public class SmokeParticleMaterial extends AbstractMaterial {
         return this;
     }
 
-    public Color3f getSpecularColor() {
-        return specularColor;
+    public Holder<Texture2DData> getNormalTexture() {
+        return normalTexture;
     }
 
-    public SmokeParticleMaterial setSpecularColor(Color3f specular) {
-        specularColor.set(specular);
-        return this;
-    }
-
-    public float getExponent() {
-        return exponent;
-    }
-
-    public SmokeParticleMaterial setExponent(float exponent) {
-        this.exponent = exponent;
-        return this;
-    }
-
-    public Holder<Texture2DData> getDiffuseTexture() {
-        return diffuseTexture;
-    }
-
-    public SmokeParticleMaterial setDiffuseTexture(Holder<Texture2DData> texture) {
-        diffuseTexture = texture;
-        return this;
-    }
-
-    public Holder<Texture2DData> getSpecularTexture() {
-        return specularTexture;
-    }
-
-    public SmokeParticleMaterial setSpecularTexture(Holder<Texture2DData> texture) {
-        specularTexture = texture;
-        return this;
-    }
-
-    public Holder<Texture2DData> getExponentTexture() {
-        return exponentTexture;
-    }
-
-    public SmokeParticleMaterial setExponentTexture(Holder<Texture2DData> texture) {
-        exponentTexture = texture;
+    public SmokeParticleMaterial setNormalTexture(Holder<Texture2DData> texture) {
+        normalTexture = texture;
         return this;
     }
 
@@ -97,24 +62,14 @@ public class SmokeParticleMaterial extends AbstractMaterial {
     protected void fillJson(JsonObject json, String directory) {
         super.fillJson(json, directory);
         json.add("diffuseColor", JsonUtil.toJson(diffuseColor));
-        JsonUtil.serializeThenAddAsProperty(json, "diffuseTexture", diffuseTexture, directory);
-        json.add("specularColor", JsonUtil.toJson(specularColor));
-        JsonUtil.serializeThenAddAsProperty(json, "specularTexture", specularTexture, directory);
-        json.addProperty("exponent", exponent);
-        JsonUtil.serializeThenAddAsProperty(json, "exponentTexture", exponentTexture, directory);
+        JsonUtil.serializeThenAddAsProperty(json, "diffuseTexture", normalTexture, directory);
     }
 
     @Override
     public void fromJson(JsonObject json, String directory) {
         super.fromJson(json, directory);
         JsonUtil.fromJson(json.getAsJsonArray("diffuseColor"), diffuseColor);
-        diffuseTexture = (Holder<Texture2DData>) JsonUtil.fromJson(
+        normalTexture = (Holder<Texture2DData>) JsonUtil.fromJson(
                 json.get("diffuseTexture"), directory);
-        JsonUtil.fromJson(json.getAsJsonArray("specularColor"), specularColor);
-        specularTexture = (Holder<Texture2DData>) JsonUtil.fromJson(
-                json.get("specularTexture"), directory);
-        exponent = json.getAsJsonPrimitive("exponent").getAsFloat();
-        exponentTexture = (Holder<Texture2DData>) JsonUtil.fromJson(
-                json.get("exponentTexture"), directory);
     }
 }

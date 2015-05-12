@@ -1045,22 +1045,16 @@ public class DeferredRenderer {
         for (int i = 0; i < spMesh.particlePositions.length; i++)
         {
         	// not sure why reverse traversal works :|
-        	program.setUniform("particleLocations[" + i + "]", spMesh.particlePositions[i]);
+        	program.setUniform("particleLocations[" + i + "]", spMesh.particlePositions[spMesh.particlePositions.length - i - 1]);
         }
-        program.setUniform("mat_diffuseColor", material.getDiffuseColor())
-            .setUniform("mat_specularColor", material.getSpecularColor())
-            .setUniform("mat_exponent", material.getExponent());
-        useTexture(program, material.getDiffuseTexture(), "mat_hasDiffuseTexture", "mat_diffuseTexture", texUnitStart + 0);
-        useTexture(program, material.getSpecularTexture(), "mat_hasSpecularTexture", "mat_specularTexture", texUnitStart + 1);
-        useTexture(program, material.getExponentTexture(), "mat_hasExponentTexture", "mat_exponentTexture", texUnitStart + 2);
+        program.setUniform("mat_diffuseColor", material.getDiffuseColor());
+        useTexture(program, material.getNormalTexture(), "mat_hasNormalTexture", "mat_normalTexture", texUnitStart + 0);
 
         // Draw the mesh part.
         drawElement(indexData, meshPart);
 
         // Tear down the program.
-        unuseTexture(program, material.getDiffuseTexture());
-        unuseTexture(program, material.getSpecularTexture());
-        unuseTexture(program, material.getExponentTexture());
+        unuseTexture(program, material.getNormalTexture());
 
         tearDownVertexShaderUniforms(program, mesh);
         disableVertexAttributes(program, mesh);

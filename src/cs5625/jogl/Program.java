@@ -186,7 +186,12 @@ public class Program implements GLResource {
 		for (Uniform uniform : this.uniforms.values()) {
 			if (uniform.getSize() > 1) {
 				String baseName = uniform.getName().substring(0, uniform.getName().length());
-                int start = (baseName.endsWith("]")) ? 1 : 0;
+				int start = 0;
+				if (baseName.endsWith("]"))
+				{
+					baseName = baseName.substring(0, baseName.length() - 3);
+					//start = 1;
+				}
 				for (int i = start; i < uniform.getSize(); i++) {
 					Uniform newUniform = new Uniform(gl, this);
 					newUniform.name = baseName + "[" + Integer.toString(i) + "]";
@@ -195,10 +200,10 @@ public class Program implements GLResource {
 					newUniform.location = uniform.location + i;
 					newUniform.isRowMajor = uniform.isRowMajor;
 					newUniforms.add(newUniform);
-					//int glUniformLocation = gl.glGetUniformLocation(this.getId(), newUniform.name);
-					//if (glUniformLocation != newUniform.location) {
-					//	throw new RuntimeException("uniform '" + newUniform.name + "' location not matching the OpenGL assigned location");
-					//}
+					int glUniformLocation = gl.glGetUniformLocation(this.getId(), newUniform.name);
+					if (glUniformLocation != newUniform.location) {
+						throw new RuntimeException("uniform '" + newUniform.name + "' location not matching the OpenGL assigned location");
+					}
 				}
                 if (start == 0)
                     toRemove.add(uniform);

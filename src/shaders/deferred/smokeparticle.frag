@@ -17,14 +17,16 @@ varying vec3 geom_position;
 varying vec2 geom_texCoord;
 
 uniform vec4 mat_diffuseColor;
-uniform bool mat_hasDiffuseTexture;
-uniform sampler2D mat_diffuseTexture;
+uniform bool mat_hasNormalTexture;
+uniform sampler2D mat_normalTexture;
 
 void main()
 {
 	vec4 diffuse = mat_diffuseColor;
-	if (mat_hasDiffuseTexture) {
-		vec4 tex = texture2D(mat_diffuseTexture, geom_texCoord);
+	
+	// normal stuffs
+	if (mat_hasNormalTexture) {
+		vec4 tex = texture2D(mat_normalTexture, geom_texCoord);
 		diffuse = diffuse * tex;
 	}
 	
