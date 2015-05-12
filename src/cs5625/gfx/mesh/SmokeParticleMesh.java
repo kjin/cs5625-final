@@ -1,28 +1,29 @@
 package cs5625.gfx.mesh;
 
 import javax.vecmath.Point3f;
+import javax.vecmath.Point4f;
 
 public class SmokeParticleMesh extends UnstructuredMesh {
 	// TODO add getter
-	public Point3f[] particlePositions;
+	public Point4f[] particlePositionScale;
 	
 	public SmokeParticleMesh(int numParticles)
 	{
-		particlePositions = new Point3f[numParticles];
-		for (int i = 0; i < particlePositions.length; i++)
+		particlePositionScale = new Point4f[numParticles];
+		for (int i = 0; i < particlePositionScale.length; i++)
 		{
-			particlePositions[i] = new Point3f(0, -100, 0);
+			particlePositionScale[i] = new Point4f(0, -1000, 0, 0);
 		}
 	}
 	
-	public void setParticlePosition(int index, Point3f position)
+	public void setParticlePosition(int index, Point3f position, float scale)
 	{
-		particlePositions[index].set(position);
+		particlePositionScale[index].set(position.x, position.y, position.z, scale);
 	}
 	
 	public void removeParticle(int index)
 	{
 		// just place it down low so no one can see it
-		particlePositions[index].set(0, 1000, 0);
+		particlePositionScale[index].set(0, -1000, 0, 0);
 	}
 }

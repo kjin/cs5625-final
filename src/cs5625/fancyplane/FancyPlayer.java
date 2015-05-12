@@ -56,7 +56,7 @@ public class FancyPlayer extends FancyShip
 		this.velocityDampeningFactor = DAMPENING;
 		fireTime = 0;
 		
-		health = 50;
+		maxHealth = health = 50;
 		collisionRadius = 1;
 	}
 	

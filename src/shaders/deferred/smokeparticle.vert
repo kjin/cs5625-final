@@ -21,7 +21,7 @@ const int CENTER = 4;
 uniform mat4 sys_modelViewMatrix;
 uniform mat4 sys_projectionMatrix;
 uniform mat4 sys_viewMatrix;
-uniform vec3 particleLocations[200]; // should be FancyParticleSystem::NUM_PARTICLES
+uniform vec4 particlePositionScale[400]; // should be FancyParticleSystem::NUM_PARTICLES
 
 varying vec3 geom_position;
 varying vec2 geom_texCoord;
@@ -63,9 +63,24 @@ void main()
 		geom_texCoord = vec2(0.5, 0.5);
 	}
 	
+	int particleIndex = int(vert_particle_index);
+	
+	// there's four types of particles. only get 1
 	geom_texCoord /= 2;
-	vec3 particleLocation = particleLocations[int(vert_particle_index)];
-	vec4 position = sys_modelViewMatrix * vec4(particleLocation + 0.5 * vertexOffset,1);
+	// based on the particle index we get what type of particle we want
+	int particleType = int(mod(particleIndex, 4));
+	if (particleType == 1 || particleType == 3)
+	{
+		geom_texCoord.x += 0.5;
+	}
+	if (particleType == 2 || particleType == 3)
+	{
+		geom_texCoord.y += 0.5;
+	}
+	
+	vec3 particlePosition = particlePositionScale[particleIndex].xyz;
+	float particleScale = particlePositionScale[particleIndex].w;
+	vec4 position = sys_modelViewMatrix * vec4(particlePosition + particleScale * 0.5f * vertexOffset,1);
 	geom_position = position.xyz;
 	gl_Position = sys_projectionMatrix * position;
 }
