@@ -878,8 +878,6 @@ public class DeferredRenderer {
             renderMeshPart(mesh, meshPart, (SingleColorMaterial) material);
         } else if (material instanceof LambertianMaterial) {
             renderMeshPart(mesh, meshPart, (LambertianMaterial) material);
-        } else if (material instanceof BlinnPhongMaterial) {
-            renderMeshPart(mesh, meshPart, (BlinnPhongMaterial) material);
         } else if (material instanceof XToonMaterial) {
         	renderMeshPart(mesh, meshPart, (XToonMaterial) material);
         } else if (material instanceof SmokeParticleMaterial) {
@@ -1037,9 +1035,16 @@ public class DeferredRenderer {
         program.use();
         bindVertexAttributes(program, mesh);
         int texUnitStart = setupVertexShaderUniforms(program, mesh);
+        
+        gl.glEnable(GL2.GL_BLEND);
+        gl.glBlendFunc(GL2.GL_ONE, GL2.GL_ONE);
 
         // Set uniforms.
         setMatrixUniforms(program);
+        
+        setPointLightUniforms(program);
+        program.setUniform("spotLight_enabled", false);
+        
         // Set particle positions
         SmokeParticleMesh spMesh = (SmokeParticleMesh)mesh;
         for (int i = 0; i < spMesh.particlePositions.length; i++)
@@ -1059,6 +1064,8 @@ public class DeferredRenderer {
         tearDownVertexShaderUniforms(program, mesh);
         disableVertexAttributes(program, mesh);
         program.unuse();
+        
+        gl.glDisable(GL2.GL_BLEND);
     }
 
     class SmokeShadowMapRenderer implements SceneTreeTraverser {
