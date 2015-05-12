@@ -49,28 +49,23 @@ public class FancyParticleSystem
 		{
 			inactiveParticles.add(new FancyParticle(i));
 		}
-		
+
+		int numSides = 8;
 		// Init vertex data
 		SmokeParticleVertexData vertexData = new SmokeParticleVertexData();
-		vertexData.startBuild().setNumParticles(numParticles).endBuild();
+		vertexData.startBuild().setNumParticles(numParticles).setNumSides(numSides).endBuild();
 		
 		// Init index data
 		IndexData indexData = new IndexData();
 		IndexData.Builder builder = indexData.startBuild();
 		for (int i = 0; i < numParticles; i++)
 		{
-			builder.add(5 * i + 0);
-			builder.add(5 * i + 1);
-			builder.add(5 * i + 4);
-			builder.add(5 * i + 1);
-			builder.add(5 * i + 2);
-			builder.add(5 * i + 4);
-			builder.add(5 * i + 2);
-			builder.add(5 * i + 3);
-			builder.add(5 * i + 4);
-			builder.add(5 * i + 3);
-			builder.add(5 * i + 0);
-			builder.add(5 * i + 4);
+			for (int j = 0; j < numSides; j++)
+			{
+				builder.add((numSides + 1) * i + j);
+				builder.add((numSides + 1) * i + (j + 1) % numSides);
+				builder.add((numSides + 1) * i + numSides);
+			}
 		}
 		builder.endBuild();
 		
@@ -80,7 +75,7 @@ public class FancyParticleSystem
 		
 		SmokeParticleMaterial smokeParticleMaterial = new SmokeParticleMaterial();
 		smokeParticleMaterial.setDiffuseColor(color);
-		MeshPart fancyMeshPart = new MeshPart(GL2.GL_TRIANGLES, 0, 15 * numParticles, new Value<Material>(smokeParticleMaterial));
+		MeshPart fancyMeshPart = new MeshPart(GL2.GL_TRIANGLES, 0, 3 * numSides * numParticles, new Value<Material>(smokeParticleMaterial));
 		fancyMesh.addPart(fancyMeshPart);
 		
 		node = new SceneTreeNode();
@@ -121,6 +116,7 @@ public class FancyParticleSystem
 	
 	public void releaseParticles(int numParticles, Point3f position, Vector3f directionMagnitude, float randomness, float range)
 	{
+		Vector3f fromPosition = new Vector3f();
 		Vector3f dir = new Vector3f();
 		Vector3f dirT = new Vector3f();
 		Vector3f dirB = new Vector3f();
@@ -131,6 +127,9 @@ public class FancyParticleSystem
 			{
 				break;
 			}
+			FancyParticle particle = inactiveParticles.get(inactiveParticles.size() - 1);
+			inactiveParticles.remove(inactiveParticles.size() - 1);
+			
 			dir.set(directionMagnitude);
 			dir.normalize();
 			getPerpendicularVector(dir, dirT);
@@ -139,12 +138,16 @@ public class FancyParticleSystem
 			dirB.scale(2 * randomness * (float)(Math.random() - 0.5f));
 			dir.add(dirT);
 			dir.add(dirB);
+			dir.normalize();
 			mag = directionMagnitude.length();
 			mag *= 1 + 2 * randomness * (Math.random() - 0.5f);
+			
+			fromPosition.set(dir);
+			fromPosition.scale(range);
+			fromPosition.add(position);
+			particle.position.set(fromPosition);
+			
 			dir.scale(mag);
-			FancyParticle particle = inactiveParticles.get(inactiveParticles.size() - 1);
-			inactiveParticles.remove(inactiveParticles.size() - 1);
-			particle.position.set(position);
 			particle.velocity.set(dir);
 			particle.lifespan = particleLifespan;
 			activeParticles.add(particle);

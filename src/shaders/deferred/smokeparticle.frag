@@ -55,5 +55,10 @@ void main()
 	gl_FragData[0] = vec4(0.0, 0.0, 0.0, 0.0);
 	gl_FragData[1] = vec4(0.0, 0.0, 0.0, 0.0);
 	gl_FragData[2] = vec4(0.0, 0.0, 0.0, 0.0);
-	gl_FragData[3] = vec4(color, alpha);
+	gl_FragData[3] = vec4(1 - color.x, 1 - color.y, 1 - color.z, alpha);
+	
+	/*gl_FragData[0] = vec4(float(SMOKE_PARTICLE_MATERIAL_ID), normal);
+	gl_FragData[1] = vec4(color, 1);
+	gl_FragData[2] = vec4(geom_position, 0);
+	gl_FragData[3] = vec4(0.0);*/
 }	

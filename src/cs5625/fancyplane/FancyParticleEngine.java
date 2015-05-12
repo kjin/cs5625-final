@@ -20,7 +20,8 @@ public class FancyParticleEngine {
 		fire.particleSize = 0.3f;
 		blacksmoke = new FancyParticleSystem(parentNode, 200, new Color4f(0.5f, 0.5f, 0.5f, 1.0f));
 		blacksmoke.particleLifespan = 120;
-		blackfire = new FancyParticleSystem(parentNode, 200, new Color4f(0.5f, 0.0f, 0.0f, 1.0f));
+		blackfire = new FancyParticleSystem(parentNode, 400, new Color4f(0.5f, 0.0f, 0.0f, 1.0f));
+		blackfire.particleSize = 1.5f;
 		blackfire.particleLifespan = 120;
 	}
 	

@@ -35,6 +35,7 @@ public class SmokeParticleVertexData extends VertexData {
     public static class Builder {
         public SmokeParticleVertexData data;
         private int numParticles = 0;
+        private int numSides = 0;
 
         Builder(SmokeParticleVertexData data) {
             this.data = data;
@@ -45,9 +46,15 @@ public class SmokeParticleVertexData extends VertexData {
         	numParticles = value;
         	return this;
         }
+        
+        public Builder setNumSides(int value)
+        {
+        	numSides = value;
+        	return this;
+        }
 
         public SmokeParticleVertexData endBuild() {
-        	int numVerticesPerParticle = 5;
+        	int numVerticesPerParticle = numSides + 1;
             data.allocate(numVerticesPerParticle * numParticles);
             for (int i = 0; i < numParticles; i++)
             {

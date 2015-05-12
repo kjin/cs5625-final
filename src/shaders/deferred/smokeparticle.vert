@@ -9,19 +9,18 @@
 
 #version 120
 
+#define NUM_PARTICLES 400
+#define NUM_SIDES 8
+#define PI 3.14159265359
+
 attribute float vert_particle_index;
 attribute float vert_particle_corner;
-
-const int BOTTOM_LEFT_CORNER = 0;
-const int BOTTOM_RIGHT_CORNER = 1;
-const int TOP_RIGHT_CORNER = 2;
-const int TOP_LEFT_CORNER = 3;
-const int CENTER = 4;
 
 uniform mat4 sys_modelViewMatrix;
 uniform mat4 sys_projectionMatrix;
 uniform mat4 sys_viewMatrix;
-uniform vec4 particlePositionScale[400]; // should be FancyParticleSystem::NUM_PARTICLES
+uniform vec4 particlePositionScale[NUM_PARTICLES]; // should be FancyParticleSystem::NUM_PARTICLES
+
 
 varying vec3 geom_position;
 varying vec2 geom_texCoord;
@@ -37,27 +36,15 @@ void main()
 	//rightVector = cross(upVector,depthVector);
 
 	vec3 vertexOffset;
-	if (vert_particle_corner == BOTTOM_LEFT_CORNER)
+	geom_texCoord = vec2(0.5, 0.5);
+	if (vert_particle_corner < NUM_SIDES)
 	{
-		vertexOffset = radius*(-upVector - rightVector);
-		geom_texCoord = vec2(0, 0);
+		float c = cos(2 * PI * vert_particle_corner / NUM_SIDES);
+		float s = sin(2 * PI * vert_particle_corner / NUM_SIDES);
+		vertexOffset = radius*(c * rightVector + s * upVector);
+		geom_texCoord += vec2(0.5 * c, 0.5 * s);
 	}
-	else if (vert_particle_corner == BOTTOM_RIGHT_CORNER)
-	{
-		vertexOffset = radius*(-upVector + rightVector);
-		geom_texCoord = vec2(1, 0);
-	}
-	else if (vert_particle_corner == TOP_RIGHT_CORNER)
-	{
-		vertexOffset = radius*(upVector + rightVector);
-		geom_texCoord = vec2(1, 1);
-	}
-	else if (vert_particle_corner == TOP_LEFT_CORNER)
-	{
-		vertexOffset = radius*(upVector - rightVector);
-		geom_texCoord = vec2(0, 1);
-	}
-	else if (vert_particle_corner == CENTER)
+	else
 	{
 		vertexOffset = vec3(0, 0, depthVector);
 		geom_texCoord = vec2(0.5, 0.5);

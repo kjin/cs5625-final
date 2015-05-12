@@ -15,7 +15,6 @@ public class FancyShip extends FancyObject
 	protected FancyBulletManager bulletManager;
 	protected int maxHealth;
 	protected FancyParticleEngine particles;
-	protected Vector3f forward;
 	
 	int time;
 	
@@ -29,15 +28,6 @@ public class FancyShip extends FancyObject
 		this.bulletManager = bulletManager;
 		this.particles = particles;
 		time = 0;
-		forward = new Vector3f();
-		if (team == FancyTeam.Player)
-		{
-			forward.x = 1;
-		}
-		else if (team == FancyTeam.Enemy)
-		{
-			forward.x = -1;
-		}
 	}
 	
 	public void update()

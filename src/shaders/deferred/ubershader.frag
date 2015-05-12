@@ -191,7 +191,7 @@ void main() {
 	}
 	/*Particle************************************/
 	else if (materialID == SMOKE_PARTICLE_MATERIAL_ID) {
-
+		gl_FragColor.xyz += color;
 	}
 	else {
 		if (!spotLight_enabled) {
@@ -199,5 +199,5 @@ void main() {
 		}
 	}
 	
-	gl_FragColor.xyz += materialParams4.xyz;	
+	gl_FragColor.xyz -= materialParams4.xyz / 6;
 }

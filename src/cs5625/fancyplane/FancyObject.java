@@ -19,6 +19,8 @@ import cs5625.gfx.objcache.Value;
 import cs5625.gfx.scenetree.SceneTreeNode;
 
 public class FancyObject {
+	protected Vector3f forward;
+	
 	protected int health;
 	public int getHealth() { return health; }
 	public void setHealth(int value) { health = value; node.setScale(health > 0 ? 1.0f : 0.001f); }
@@ -75,6 +77,16 @@ public class FancyObject {
 		health = 1;
 		velocity = new Vector3f(0,0,0);
 		position = node.getPosition();
+		
+		forward = new Vector3f();
+		if (team == FancyTeam.Player)
+		{
+			forward.x = 1;
+		}
+		else if (team == FancyTeam.Enemy)
+		{
+			forward.x = -1;
+		}
 	}
 	
 	protected boolean hasSpecialMaterial()
