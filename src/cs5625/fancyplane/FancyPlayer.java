@@ -45,14 +45,14 @@ public class FancyPlayer extends FancyShip
 	final float ACCELERATION = 0.1f;
 	final float DAMPENING = 0.8f;
 	
-	final float UP_BOUND = 10;
-	final float DOWN_BOUND = -10;
-	final float RIGHT_BOUND = 20;
-	final float LEFT_BOUND = -20;
+	final float UP_BOUND = 11;
+	final float DOWN_BOUND = -11;
+	final float RIGHT_BOUND = 22;
+	final float LEFT_BOUND = -22;
 	
-	public FancyPlayer(SceneTreeNode parentNode, FancyBulletManager bulletManager)
+	public FancyPlayer(SceneTreeNode parentNode, FancyBulletManager bulletManager, FancyParticleEngine particles)
 	{
-		super(parentNode, "fancy-player", FancyTeam.Player, bulletManager);
+		super(parentNode, "fancy-player", FancyTeam.Player, bulletManager, particles);
 		this.velocityDampeningFactor = DAMPENING;
 		fireTime = 0;
 		

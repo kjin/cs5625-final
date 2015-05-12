@@ -44,6 +44,7 @@ void main()
 		
 		alpha = tex.w;
 	}
+<<<<<<< HEAD
 	
 	// get the color
 	vec3 color = diffuse.xyz;

@@ -14,7 +14,7 @@ public class FancyEnemyManager
 	int currentIndex;
 	int time;
 	
-	public FancyEnemyManager(SceneTreeNode parentNode, FancyBulletManager bulletManager)
+	public FancyEnemyManager(SceneTreeNode parentNode, FancyBulletManager bulletManager, FancyParticleEngine particles)
 	{
 		enemyParentNode = new SceneTreeNode();
 		parentNode.addChild(enemyParentNode);
@@ -22,7 +22,7 @@ public class FancyEnemyManager
 		enemies = new FancyEnemy[NUM_ENEMIES];
 		for (int i = 0; i < enemies.length; i++)
 		{
-			enemies[i] = new FancyEnemy(enemyParentNode, bulletManager);
+			enemies[i] = new FancyEnemy(enemyParentNode, bulletManager, particles);
 			enemies[i].setHealth(0);
 		}
 		currentIndex = 0;

@@ -24,7 +24,9 @@ public class FancyGameController {
 	private FancyBulletManager fancyBulletManager;
 	private FancyPlayer fancyPlayer;
 	private FancyEnemyManager fancyEnemyManager;
-	private FancyParticleSystem fancyParticleSystem;
+	
+	// particle systems
+	private FancyParticleEngine fancyParticles;
 	
     private PerspectiveCamera camera;
     
@@ -36,9 +38,9 @@ public class FancyGameController {
 		fancyScene = rootNode;
 		fancyLandscape = new FancyLandscape(fancyScene);
 		fancyBulletManager = new FancyBulletManager(fancyScene);
-		fancyPlayer = new FancyPlayer(fancyScene, fancyBulletManager);
-		fancyEnemyManager = new FancyEnemyManager(fancyScene, fancyBulletManager);
-		fancyParticleSystem = new FancyParticleSystem(fancyScene);
+		fancyParticles = new FancyParticleEngine(fancyScene);
+		fancyPlayer = new FancyPlayer(fancyScene, fancyBulletManager, fancyParticles);
+		fancyEnemyManager = new FancyEnemyManager(fancyScene, fancyBulletManager, fancyParticles);
 		
 		// light stuff
     	ShadowingSpotLight spotLight = new ShadowingSpotLight();
@@ -69,7 +71,6 @@ public class FancyGameController {
     	camera = new PerspectiveCamera(new Point3f(0, 0, 20),
                 new Point3f(0, 0, 0),
                 new Vector3f(0, 1, 0), 0.1f, 500, 60.0f);
-    	
     	time = 0;
 	}
 	
@@ -77,16 +78,17 @@ public class FancyGameController {
 	{
 		time++;
 		
-		fancyPlayer.update();
 		fancyBulletManager.update();
+		fancyParticles.update();
+		fancyPlayer.update();
 		fancyEnemyManager.update();
 		fancyLandscape.update();
-		fancyParticleSystem.update();
 		
 		// Collision handling
 		FancyBullet[] bullets = fancyBulletManager.getBullets();
 		FancyEnemy[] enemies = fancyEnemyManager.getEnemies();
-		Vector3f temp = new Vector3f();
+		Point3f tempP = new Point3f();
+		Vector3f tempV = new Vector3f();
 		// Player - Enemy
 		if (fancyPlayer.health > 0)
 		{
@@ -94,7 +96,7 @@ public class FancyGameController {
 			{
 				if (enemies[i].health > 0 && fancyPlayer.collidesWith(enemies[i]))
 				{
-					doCollisionAftermath(fancyPlayer, enemies[i], 20, 20);
+					doCollisionAftermath(fancyPlayer, enemies[i], 100, 100);
 				}
 			}
 		}
@@ -105,7 +107,7 @@ public class FancyGameController {
 			{
 				if (fancyPlayer.health > 0 && fancyPlayer.collidesWith(bullets[i]))
 				{
-					doCollisionAftermath(fancyPlayer, bullets[i], 20, 1);
+					doCollisionAftermath(fancyPlayer, bullets[i], 100, 0);
 				}
 				if (bullets[i].health > 0)
 				{
@@ -113,29 +115,13 @@ public class FancyGameController {
 					{
 						if (enemies[j].health > 0 && enemies[j].collidesWith(bullets[i]))
 						{
-							doCollisionAftermath(enemies[j], bullets[i], 20, 1);
+							doCollisionAftermath(enemies[j], bullets[i], 100, 0);
 						}
 						if (bullets[i].health <= 0)
 						{
 							break;
 						}
 					}
-				}
-			}
-		}
-		// Ships smoke if they have less than the max health
-		for (int i = 0; i < enemies.length; i++)
-		{
-			int interval = 0;
-			if (enemies[i].health > 0)
-			{
-				float healthPercentage = (float)enemies[i].health / enemies[i].maxHealth;
-				if (healthPercentage < 0.7f) { interval = 4; }
-				else if (healthPercentage < 0.4f) { interval = 2; }
-				if (interval > 0 && time % interval == 0)
-				{
-					temp.set(0, 0.05f, 0);
-					fancyParticleSystem.releaseParticles(1, enemies[i].getPosition(), temp, 0.5f);
 				}
 			}
 		}
@@ -152,14 +138,14 @@ public class FancyGameController {
 			temp.set(0, 1, 0);
 			temp.normalize();
 			temp.scale(0.05f);
-			fancyParticleSystem.releaseParticles(o1Particles, o1.getPosition(), temp, 0.5f);
+			fancyParticles.blackfire.releaseParticles(o1Particles, o1.getPosition(), temp, 0.5f);
 		}
 		if (o2Particles > 0 && o2.getHealth() == 0)
 		{
 			temp.set(0, 1, 0);
 			temp.normalize();
 			temp.scale(0.05f);
-			fancyParticleSystem.releaseParticles(o2Particles, o2.getPosition(), temp, 0.5f);
+			fancyParticles.blackfire.releaseParticles(o2Particles, o2.getPosition(), temp, 0.5f);
 		}
 	}
 	
