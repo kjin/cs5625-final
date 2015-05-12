@@ -62,7 +62,7 @@ void main()
 			l = normalize(l);
 			float attenuation = dot(pointLight_attenuation[i], vec3(1, d, d*d));
 			float dotProd = max(dot(normal,l), 0);
-			color = diffuse.xyz * dotProd * pointLight_color[i];
+			color = diffuse.xyz; // * dotProd;
 		}
 	}
 	

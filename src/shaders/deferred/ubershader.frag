@@ -199,5 +199,9 @@ void main() {
 		}
 	}
 	
-	gl_FragColor.xyz += materialParams4.xyz;	
+	gl_FragColor.xyz += (materialParams4.xyz);
+	if(materialParams4.w > 0.1)
+	{
+		gl_FragColor.xyz /= 3;
+	}	
 }
