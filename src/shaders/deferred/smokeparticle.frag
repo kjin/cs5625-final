@@ -44,12 +44,11 @@ void main()
 		
 		alpha = tex.w;
 	}
-<<<<<<< HEAD
 	
 	// get the color
 	vec3 color = diffuse.xyz;
 	if (mat_hasToonTexture) {
-		vec3 l = pointLight_eyePosition[i] - geom_position;
+		vec3 l = pointLight_eyePosition[0] - geom_position;
 		float d = sqrt(dot(l, l));
 		l = normalize(l);
 		float dotProd = max(dot(normal,l), 0);
