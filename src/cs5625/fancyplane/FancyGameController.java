@@ -26,6 +26,8 @@ public class FancyGameController {
 	private FancyParticleSystem fancyParticleSystem;
 	
     private PerspectiveCamera camera;
+    
+    private int time;
 	
 	public FancyGameController(SceneTreeNode rootNode)
 	{
@@ -58,10 +60,14 @@ public class FancyGameController {
     	camera = new PerspectiveCamera(new Point3f(0, 0, 20),
                 new Point3f(0, 0, 0),
                 new Vector3f(0, 1, 0), 0.1f, 500, 60.0f);
+    	
+    	time = 0;
 	}
 	
 	public void update()
 	{
+		time++;
+		
 		fancyPlayer.update();
 		fancyBulletManager.update();
 		fancyEnemyManager.update();
@@ -108,6 +114,22 @@ public class FancyGameController {
 				}
 			}
 		}
+		// Ships smoke if they have less than the max health
+		for (int i = 0; i < enemies.length; i++)
+		{
+			int interval = 0;
+			if (enemies[i].health > 0)
+			{
+				float healthPercentage = (float)enemies[i].health / enemies[i].maxHealth;
+				if (healthPercentage < 0.7f) { interval = 4; }
+				else if (healthPercentage < 0.4f) { interval = 2; }
+				if (interval > 0 && time % interval == 0)
+				{
+					temp.set(0, 0.05f, 0);
+					fancyParticleSystem.releaseParticles(1, enemies[i].getPosition(), temp, 0.5f);
+				}
+			}
+		}
 	}
 	
 	Vector3f temp = new Vector3f(); // for below
@@ -118,16 +140,14 @@ public class FancyGameController {
 		o2.setHealth(o2.getHealth() - 1);
 		if (o1Particles > 0 && o1.getHealth() == 0)
 		{
-			temp.set(o2.getVelocity());
-			temp.setY(temp.y - 1);
+			temp.set(0, 1, 0);
 			temp.normalize();
 			temp.scale(0.05f);
 			fancyParticleSystem.releaseParticles(o1Particles, o1.getPosition(), temp, 0.5f);
 		}
 		if (o2Particles > 0 && o2.getHealth() == 0)
 		{
-			temp.set(o1.getVelocity());
-			temp.setY(temp.y - 1);
+			temp.set(0, 1, 0);
 			temp.normalize();
 			temp.scale(0.05f);
 			fancyParticleSystem.releaseParticles(o2Particles, o2.getPosition(), temp, 0.5f);

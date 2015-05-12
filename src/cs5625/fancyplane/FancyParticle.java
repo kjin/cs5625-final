@@ -38,7 +38,7 @@ public class FancyParticle
 	{
 		if (lifespan > 0)
 		{
-			velocity.setY(velocity.y + 0.001f);
+			velocity.scale(0.99f);
 			position.add(velocity);
 			lifespan--;
 			if (lifespan == 0)

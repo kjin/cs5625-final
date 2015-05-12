@@ -10,10 +10,14 @@ import cs5625.gfx.scenetree.SceneTreeNode;
 public class FancyShip extends FancyObject
 {
 	protected FancyBulletManager bulletManager;
+	protected int maxHealth;
 
 	public FancyShip(SceneTreeNode parentNode, String modelName, FancyTeam team, FancyBulletManager bulletManager)
 	{
 		super(parentNode, modelName, team);
+		maxHealth = health;
 		this.bulletManager = bulletManager;
 	}
+	
+	public int getMaxHealth() { return maxHealth; }
 }

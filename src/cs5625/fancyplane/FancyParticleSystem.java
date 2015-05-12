@@ -24,7 +24,7 @@ import cs5625.gfx.scenetree.SceneTreeNode;
 
 public class FancyParticleSystem
 {
-	int NUM_PARTICLES = 200;
+	int NUM_PARTICLES = 400;
 	
 	SceneTreeNode node;
 	
@@ -88,7 +88,7 @@ public class FancyParticleSystem
 		{
 			FancyParticle particle = itr.next();
 			particle.update();
-			fancyMesh.setParticlePosition(particle.id, particle.position);
+			fancyMesh.setParticlePosition(particle.id, particle.position, particle.lifespan / 120.0f);
 			if (particle.lifespan <= 0)
 			{
 				itr.remove();
@@ -100,15 +100,15 @@ public class FancyParticleSystem
 	
 	private void getPerpendicularVector(Vector3f vIn, Vector3f vOut)
 	{
-		if (vIn.y != 0 && vIn.z != 0)
+		if (Float.isNaN(vIn.lengthSquared()))
 		{
-			vOut.set(1, 0, 0);
+			return;
 		}
-		else
+		do
 		{
-			vOut.set(0, 1, 0);
-		}
-		vOut.cross(vIn, vOut);
+			vOut.set((float)Math.random() - 0.5f, (float)Math.random() - 0.5f, (float)Math.random() - 0.5f);
+			vOut.cross(vIn, vOut);
+		} while (vOut.lengthSquared() == 0 || Float.isNaN(vOut.lengthSquared()));
 		vOut.normalize();
 	}
 	

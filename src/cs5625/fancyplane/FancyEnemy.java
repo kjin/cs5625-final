@@ -23,12 +23,13 @@ public class FancyEnemy extends FancyShip
 	{
 		super(parentNode, "fancy-enemy", FancyTeam.Enemy, bulletManager);
 		collisionRadius = 1;
+		maxHealth = 5;
 		time = (int)(FIRE_RATE * Math.random());
 	}
 	
 	public void initialize()
 	{
-		health = 5;
+		health = maxHealth;
 		position.x = 30;
 		position.y = (float)(2.0 * Math.random() - 1.0) * 5;
 		position.z = 0;
